@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
-class TblMvExpence extends Equatable {
+class TblMvExpense extends Equatable {
   final int id;
   final int categoryId;
   final int accId;
@@ -10,7 +10,7 @@ class TblMvExpence extends Equatable {
   final String? desc;
   final DateTime? createdDate;
   final DateTime? modifiedDate;
-  TblMvExpence({
+  TblMvExpense({
     required this.id,
     required this.categoryId,
     required this.accId,
@@ -20,7 +20,7 @@ class TblMvExpence extends Equatable {
     this.modifiedDate,
   });
 
-  TblMvExpence copyWith({
+  TblMvExpense copyWith({
     int? id,
     int? categoryId,
     int? accId,
@@ -29,7 +29,7 @@ class TblMvExpence extends Equatable {
     DateTime? createdDate,
     DateTime? modifiedDate,
   }) {
-    return TblMvExpence(
+    return TblMvExpense(
       id: id ?? this.id,
       categoryId: categoryId ?? this.categoryId,
       accId: accId ?? this.accId,
@@ -52,8 +52,8 @@ class TblMvExpence extends Equatable {
     };
   }
 
-  factory TblMvExpence.fromMap(Map<String, dynamic> map) {
-    return TblMvExpence(
+  factory TblMvExpense.fromMap(Map<String, dynamic> map) {
+    return TblMvExpense(
       id: map['id'],
       categoryId: map['category'] ?? 0,
       accId: map['acc_id'] ?? 0,
@@ -66,8 +66,8 @@ class TblMvExpence extends Equatable {
 
   String toJson() => json.encode(toMap());
 
-  factory TblMvExpence.fromJson(String source) =>
-      TblMvExpence.fromMap(json.decode(source));
+  factory TblMvExpense.fromJson(String source) =>
+      TblMvExpense.fromMap(json.decode(source));
 
   @override
   bool get stringify => true;

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 void main() {
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+  };
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 

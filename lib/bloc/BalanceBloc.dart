@@ -28,17 +28,29 @@ abstract class BalanceEvent extends Equatable {
 class LoadEvent extends BalanceEvent {}
 
 class AddIncomeEvent extends BalanceEvent {
-  final TblMvIncome income;
-  AddIncomeEvent({required this.income});
+  final double value;
+  final int catId;
+  final String text;
+  AddIncomeEvent({
+    required this.value,
+    required this.catId,
+    required this.text,
+  });
   @override
-  List<Object> get props => [income];
+  List<Object> get props => [value, catId, text];
 }
 
 class AddExpenseEvent extends BalanceEvent {
-  final TblMvExpence expence;
-  AddExpenseEvent({required this.expence});
+  final double value;
+  final int catId;
+  final String text;
+  AddExpenseEvent({
+    required this.value,
+    required this.catId,
+    required this.text,
+  });
   @override
-  List<Object> get props => [expence];
+  List<Object> get props => [value, catId, text];
 }
 
 // === === === === === === === === BLoC === === === === === === === ===
@@ -47,8 +59,9 @@ class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
   BalanceBloc() : super(EmptyState());
   Stream<BalanceState> mapEventToState(BalanceEvent event) async* {
     final _sharedPref = await SharedPreferences.getInstance();
-    String accId =
-        _sharedPref.getString(SharedPrefKeys.accId) ?? SharedPrefKeys.accId;
+    String accId = _sharedPref.getString(SharedPrefKeys.accId) ??
+        SharedPrefKeys.defaultAcc;
+    yield LoadingState();
     if (event is LoadEvent) {}
   }
 }

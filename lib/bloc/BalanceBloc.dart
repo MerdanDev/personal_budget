@@ -59,8 +59,9 @@ class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
   BalanceBloc() : super(EmptyState());
   Stream<BalanceState> mapEventToState(BalanceEvent event) async* {
     final _sharedPref = await SharedPreferences.getInstance();
-    String accId =
-        _sharedPref.getString(SharedPrefKeys.accId) ?? SharedPrefKeys.accId;
+    String accId = _sharedPref.getString(SharedPrefKeys.accId) ??
+        SharedPrefKeys.defaultAcc;
+    yield LoadingState();
     if (event is LoadEvent) {}
   }
 }

@@ -128,8 +128,8 @@ abstract class SqliteDB {
         ${income.accId},
         ${income.value},
         ${income.desc},
-        ${income.createdDate},
-        ${income.modifiedDate}
+        datetime('${income.createdDate}'),
+        datetime('${income.modifiedDate}')
       )
     ''');
     return result;
@@ -149,8 +149,8 @@ abstract class SqliteDB {
         ${expense.accId},
         ${expense.value},
         ${expense.desc},
-        ${expense.createdDate},
-        ${expense.modifiedDate}
+        datetime('${expense.createdDate}'),
+        datetime('${expense.modifiedDate}')
       )
     ''');
     return result;
@@ -192,9 +192,9 @@ abstract class SqliteDB {
       category_id = ${income.categoryId},
       acc_id = ${income.accId},
       value = ${income.value},
-      desc = ${income.desc},
-      created_date = ${income.createdDate},
-      modified_date = ${income.modifiedDate}      
+      desc = '${income.desc}',
+      created_date = datetime('${income.createdDate}'),
+      modified_date = datetime('${DateTime.now()}')      
       WHERE id = ${income.id}
     ''');
     return result;
@@ -206,9 +206,9 @@ abstract class SqliteDB {
       category_id = ${expense.categoryId},
       acc_id = ${expense.accId},
       value = ${expense.value},
-      desc = ${expense.desc},
-      created_date = ${expense.createdDate},
-      modified_date = ${expense.modifiedDate}      
+      desc = '${expense.desc}',
+      created_date = datetime('${expense.createdDate}'),
+      modified_date = datetime('${DateTime.now()}')    
       WHERE id = ${expense.id}
     ''');
     return result;

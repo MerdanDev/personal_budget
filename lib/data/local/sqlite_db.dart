@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:personal_budget/helper/default_item.dart';
 import 'package:personal_budget/models/tbl_mv_acc_type.dart';
 import 'package:personal_budget/models/tbl_mv_category.dart';
 import 'package:personal_budget/models/tbl_mv_expense.dart';
@@ -60,6 +61,7 @@ abstract class SqliteDB {
           id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
           name TEXT NOT NULL,
           image TEXT NULL,
+          type INTEGER NOT NULL,
           desc TEXT NULL
         )
       ''',
@@ -75,6 +77,22 @@ abstract class SqliteDB {
         )
       ''',
     );
+    List<TblMvCategory> categories = [];
+    DefaultItem.categories
+        .map((e) => TblMvCategory.initMap(e))
+        .forEach((element) async {
+      categories.add(await element);
+    });
+
+    categories.map((e) async => await db.insert('tbl_mv_category', e.toMap()));
+
+    List<TblMvAccType> accounts = [];
+    DefaultItem.accounts
+        .map((e) => TblMvAccType.initMap(e))
+        .forEach((element) async {
+      accounts.add(await element);
+    });
+    accounts.map((e) async => await db.insert('tbl_mv_acc_type', e.toMap()));
   }
 
   static Future<List<TblMvAccType>> getAccounts() async {
@@ -110,6 +128,20 @@ abstract class SqliteDB {
   static Future<List<TblMvIncome>> getIncomes() async {
     List list = await _db!.rawQuery('''
       SELECT * FROM tbl_mv_income
+    ''');
+    return list.map((e) => TblMvIncome.fromMap(e)).toList();
+  }
+
+  static Future<List<TblMvExpense>> getAccExpenses(int id) async {
+    List list = await _db!.rawQuery('''
+      SELECT * FROM tbl_mv_expense WHERE acc_id = $id
+    ''');
+    return list.map((e) => TblMvExpense.fromMap(e)).toList();
+  }
+
+  static Future<List<TblMvIncome>> getAccIncomes(int id) async {
+    List list = await _db!.rawQuery('''
+      SELECT * FROM tbl_mv_income WHERE acc_id = $id
     ''');
     return list.map((e) => TblMvIncome.fromMap(e)).toList();
   }

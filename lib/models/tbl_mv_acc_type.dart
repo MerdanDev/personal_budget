@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
 
 class TblMvAccType extends Equatable {
   final int id;
@@ -46,6 +47,17 @@ class TblMvAccType extends Equatable {
       id: map['id'],
       name: map['name'],
       image: base64Decode(map['image']),
+      desc: map['desc'],
+    );
+  }
+
+  static Future<TblMvAccType> initMap(Map<String, dynamic> map) async {
+    ByteData bytes = await rootBundle.load(map['image']);
+    Uint8List image = bytes.buffer.asUint8List();
+    return TblMvAccType(
+      id: map['id'],
+      name: map['name'],
+      image: image,
       desc: map['desc'],
     );
   }

@@ -2,33 +2,38 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
 
 class TblMvCategory extends Equatable {
   final int id;
   final String name;
   final Uint8List image;
   final String desc;
+  final int type;
   TblMvCategory({
     required this.id,
     required this.name,
     required this.image,
     required this.desc,
+    required this.type,
   });
 
   @override
-  List<Object> get props => [id, name, image, desc];
+  List<Object> get props => [id, name, image, desc, type];
 
   TblMvCategory copyWith({
     int? id,
     String? name,
     Uint8List? image,
     String? desc,
+    int? type,
   }) {
     return TblMvCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       image: image ?? this.image,
       desc: desc ?? this.desc,
+      type: type ?? this.type,
     );
   }
 
@@ -38,6 +43,7 @@ class TblMvCategory extends Equatable {
       'name': name,
       'image': base64Encode(image),
       'desc': desc,
+      'type': type
     };
   }
 
@@ -47,6 +53,19 @@ class TblMvCategory extends Equatable {
       name: map['name'],
       image: base64Decode(map['image']),
       desc: map['desc'],
+      type: map['type'],
+    );
+  }
+
+  static Future<TblMvCategory> initMap(Map<String, dynamic> map) async {
+    ByteData bytes = await rootBundle.load(map['image']);
+    Uint8List image = bytes.buffer.asUint8List();
+    return TblMvCategory(
+      id: map['id'],
+      name: map['name'],
+      image: image,
+      desc: map['desc'],
+      type: map['type'],
     );
   }
 

@@ -25,11 +25,15 @@ class LoadedState extends BalanceState {
   final List<TblMvIncome> incomes;
   final List<TblMvCategory> categories;
   final List<TblMvAccType> accounts;
+  final List<TempCat> expenseCats;
+  final List<TempCat> incomeCats;
   LoadedState({
     required this.accounts,
     required this.categories,
     required this.expenses,
     required this.incomes,
+    required this.expenseCats,
+    required this.incomeCats,
   });
 }
 
@@ -44,11 +48,14 @@ class LoadEvent extends BalanceEvent {}
 
 class AddIncomeEvent extends BalanceEvent {
   final double value;
+
+  final int accId;
   final int catId;
   final String text;
   AddIncomeEvent({
     required this.value,
     required this.catId,
+    required this.accId,
     required this.text,
   });
   @override
@@ -58,10 +65,12 @@ class AddIncomeEvent extends BalanceEvent {
 class AddExpenseEvent extends BalanceEvent {
   final double value;
   final int catId;
+  final int accId;
   final String text;
   AddExpenseEvent({
     required this.value,
     required this.catId,
+    required this.accId,
     required this.text,
   });
   @override
@@ -72,29 +81,127 @@ class AddExpenseEvent extends BalanceEvent {
 
 class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
   BalanceBloc() : super(EmptyState());
+  SqliteDB db = SqliteDB.instance;
 
   List<TblMvExpense> expenses = [];
   List<TblMvIncome> incomes = [];
   List<TblMvCategory> categories = [];
   List<TblMvAccType> accounts = [];
+  List<TempCat> expenceCats = [];
+  List<TempCat> incomeCats = [];
 
+  Stream<BalanceState> _mapLoadedToState(BalanceEvent event) async* {
+    yield LoadedState(
+      accounts: accounts,
+      categories: categories,
+      expenses: expenses,
+      incomes: incomes,
+      incomeCats: incomeCats,
+      expenseCats: expenceCats,
+    );
+  }
+
+  @override
   Stream<BalanceState> mapEventToState(BalanceEvent event) async* {
     final _sharedPref = await SharedPreferences.getInstance();
     int accId =
         _sharedPref.getInt(SharedPrefKeys.accId) ?? SharedPrefKeys.defaultAcc;
     yield LoadingState();
     if (event is LoadEvent) {
-      expenses = await SqliteDB.getAccExpenses(accId);
-      incomes = await SqliteDB.getAccIncomes(accId);
-      categories = await SqliteDB.getCategories();
-      accounts = await SqliteDB.getAccounts();
+      expenses = await db.getAccExpenses(accId);
+      incomes = await db.getAccIncomes(accId);
+      categories = await db.getCategories();
+      accounts = await db.getAccounts();
+      expenceCats = categories.where((element) => element.type == -1).map((e) {
+        double value = 0;
+        if (expenses.isNotEmpty) {
+          // value = expenses
+          //     .where((element) => element.categoryId == e.id)
+          //     .map((e) => e.value)
+          //     .toList()
+          //     .reduce((value, element) => value + element);
+          for (var item in expenses) {
+            if (item.categoryId == e.id) {
+              value += item.value;
+            }
+          }
+        }
+        //  = incomes.;
+        return TempCat(name: e.name, type: e.type, value: value);
+      }).toList();
 
-      yield LoadedState(
-        accounts: accounts,
-        categories: categories,
-        expenses: expenses,
-        incomes: incomes,
+      incomeCats = categories.where((element) => element.type == 1).map((e) {
+        double value = 0;
+        if (incomes.isNotEmpty) {
+          // value = incomes
+          //     .where((element) => element.categoryId == e.id)
+          //     .map((e) => e.value)
+          //     .toList()
+          //     .reduce((value, element) => value + element);
+          for (var item in incomes) {
+            print('Merdan item.categoryId: ${item.categoryId}');
+            print('Merdan categoryId: ${e.id}');
+            if (item.categoryId == e.id) {
+              value += item.value;
+            }
+          }
+        }
+        print('MerdanDev value: $value');
+        //  = incomes.;
+        return TempCat(name: e.name, type: e.type, value: value);
+      }).toList();
+
+      yield* _mapLoadedToState(event);
+    } else if (event is AddExpenseEvent) {
+      int result = await db.insertExpense(
+        TblMvExpense(
+          id: 0,
+          categoryId: event.catId,
+          accId: event.accId,
+          value: event.value,
+          desc: event.text,
+        ),
       );
+      print('MerdanDev insertExpense result is $result');
+      expenses = await db.getAccExpenses(accId);
+      expenceCats = categories.where((element) => element.type == -1).map((e) {
+        double value = 0;
+        if (expenses.isNotEmpty) {
+          value = expenses
+              .map((e) => e.value)
+              .toList()
+              .reduce((value, element) => value + element);
+        }
+        //  = incomes.;
+        return TempCat(name: e.name, type: e.type, value: value);
+      }).toList();
+
+      yield* _mapLoadedToState(event);
+    } else if (event is AddIncomeEvent) {
+      print('MerdanDev catId:${event.catId}');
+      int result = await db.insertIncome(
+        TblMvIncome(
+          id: 0,
+          categoryId: event.catId,
+          accId: event.accId,
+          value: event.value,
+          desc: event.text,
+        ),
+      );
+      print('MerdanDev insertIncome result is $result');
+      incomes = await db.getAccIncomes(accId);
+      incomeCats = categories.where((element) => element.type == 1).map((e) {
+        double value = 0;
+        if (expenses.isNotEmpty) {
+          value = incomes
+              .map((e) => e.value)
+              .toList()
+              .reduce((value, element) => value + element);
+        }
+        //  = incomes.;
+        return TempCat(name: e.name, type: e.type, value: value);
+      }).toList();
+      yield* _mapLoadedToState(event);
     }
   }
 }

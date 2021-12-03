@@ -55,12 +55,16 @@ class TblMvIncome extends Equatable {
   factory TblMvIncome.fromMap(Map<String, dynamic> map) {
     return TblMvIncome(
       id: map['id'] ?? 0,
-      categoryId: map['category'] ?? 0,
+      categoryId: map['category_id'] ?? 0,
       accId: map['acc_id'] ?? 0,
       value: map['value'] ?? 0,
       desc: map['desc'],
-      createdDate: DateTime.parse(map['created_date']),
-      modifiedDate: DateTime.parse(map['modified_date']),
+      createdDate: map['created_date'] != null
+          ? DateTime.parse(map['created_date'])
+          : DateTime.now(),
+      modifiedDate: map['modified_date'] != null
+          ? DateTime.parse(map['modified_date'])
+          : DateTime.now(),
     );
   }
 

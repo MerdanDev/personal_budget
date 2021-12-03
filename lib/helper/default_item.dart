@@ -9,7 +9,7 @@ class DefaultItem {
     {
       'id': 2,
       'name': 'Card',
-      'image': 'assets/images/credit-caard.png',
+      'image': 'assets/images/credit-card.png',
       'desc': 'It\'s for Bank accounts, credit card and etc.',
     },
   ];

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:path_provider/path_provider.dart';
 import 'package:personal_budget/helper/default_item.dart';
 import 'package:personal_budget/models/tbl_mv_acc_type.dart';
@@ -9,24 +7,37 @@ import 'package:personal_budget/models/tbl_mv_income.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-abstract class SqliteDB {
-  static final _dbName = 'personalBudget.db';
+class SqliteDB {
+  SqliteDB._init();
+  static final SqliteDB instance = SqliteDB._init();
+  final String _dbName = 'local.db';
 
-  static get _dbVersion => 1;
+  get _dbVersion => 1;
   static Database? _db;
 
-  static Future<void> init() async {
-    if (_db != null) {
-      return;
-    }
+  Future<Database> get database async {
+    if (_db != null) return _db!;
 
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, _dbName);
-    print('MerdanDev Db Path is:' + path);
-    _db = await openDatabase(path, version: _dbVersion, onCreate: _onCreate);
+    _db = await _initDB(_dbName);
+    return _db!;
   }
 
-  static Future _onCreate(Database db, int version) async {
+  Future<Database> _initDB(String filePath) async {
+    final documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, _dbName);
+    print('MerdanDev db path:' + path);
+    try {
+      Database db =
+          await openDatabase(path, version: _dbVersion, onCreate: _onCreate);
+      print('Result super');
+      return db;
+    } catch (e) {
+      print(e);
+    }
+    throw Exception('DB was not created');
+  }
+
+  Future _onCreate(Database db, int version) async {
     await db.execute(
       '''
         CREATE TABLE tbl_mv_income(
@@ -78,76 +89,109 @@ abstract class SqliteDB {
       ''',
     );
     List<TblMvCategory> categories = [];
-    DefaultItem.categories
-        .map((e) => TblMvCategory.initMap(e))
-        .forEach((element) async {
-      categories.add(await element);
-    });
+    // DefaultItem.categories
+    //     .map((e) => TblMvCategory.initMap(e))
+    //     .forEach((element) async {
+    //   categories.add(await element);
+    // });
+    for (var item in DefaultItem.categories) {
+      categories.add(await TblMvCategory.initMap(item));
+    }
 
-    categories.map((e) async => await db.insert('tbl_mv_category', e.toMap()));
+    print('MerdanDev categories.length:${categories.length}');
+
+    // categories.map((e) async {
+    //   int result = await db.insert('tbl_mv_category', e.toMap());
+    //   print('MerdanDev category result is:$result');
+    // });
+
+    for (var item in categories) {
+      int result = await db.insert('tbl_mv_category', item.toMap());
+      print('MerdanDev category result is:$result');
+    }
 
     List<TblMvAccType> accounts = [];
-    DefaultItem.accounts
-        .map((e) => TblMvAccType.initMap(e))
-        .forEach((element) async {
-      accounts.add(await element);
-    });
-    accounts.map((e) async => await db.insert('tbl_mv_acc_type', e.toMap()));
+    // DefaultItem.accounts
+    //     .map((e) => TblMvAccType.initMap(e))
+    //     .forEach((element) async {
+    //   accounts.add(await element);
+    // });
+    for (var item in DefaultItem.accounts) {
+      accounts.add(await TblMvAccType.initMap(item));
+    }
+
+    print('MerdanDev accounts.length:${accounts.length}');
+    // accounts.map((e) async {
+    //   int result = await db.insert('tbl_mv_acc_type', e.toMap());
+    //   print('MerdanDev account result is:$result');
+    // });
+    for (var item in accounts) {
+      int result = await db.insert('tbl_mv_acc_type', item.toMap());
+      print('MerdanDev account result is:$result');
+    }
   }
 
-  static Future<List<TblMvAccType>> getAccounts() async {
-    List list = await _db!.rawQuery('''
+  Future<List<TblMvAccType>> getAccounts() async {
+    final db = await instance.database;
+    List list = await db.rawQuery('''
       SELECT * FROM tbl_mv_acc_type
     ''');
 
     return list.map((e) => TblMvAccType.fromMap(e)).toList();
   }
 
-  static Future<TblMvAccType> getAccount(int id) async {
-    List list = await _db!.rawQuery('''
+  Future<TblMvAccType> getAccount(int id) async {
+    final db = await instance.database;
+    List list = await db.rawQuery('''
       SELECT * FROM tbl_mv_acc_type WHERE id = $id
     ''');
 
     return TblMvAccType.fromMap(list.first);
   }
 
-  static Future<List<TblMvCategory>> getCategories() async {
-    List list = await _db!.rawQuery('''
+  Future<List<TblMvCategory>> getCategories() async {
+    final db = await instance.database;
+    List list = await db.rawQuery('''
       SELECT * FROM tbl_mv_category
     ''');
     return list.map((e) => TblMvCategory.fromMap(e)).toList();
   }
 
-  static Future<List<TblMvExpense>> getExpenses() async {
-    List list = await _db!.rawQuery('''
+  Future<List<TblMvExpense>> getExpenses() async {
+    final db = await instance.database;
+    List list = await db.rawQuery('''
       SELECT * FROM tbl_mv_expense
     ''');
     return list.map((e) => TblMvExpense.fromMap(e)).toList();
   }
 
-  static Future<List<TblMvIncome>> getIncomes() async {
-    List list = await _db!.rawQuery('''
+  Future<List<TblMvIncome>> getIncomes() async {
+    final db = await instance.database;
+    List list = await db.rawQuery('''
       SELECT * FROM tbl_mv_income
     ''');
     return list.map((e) => TblMvIncome.fromMap(e)).toList();
   }
 
-  static Future<List<TblMvExpense>> getAccExpenses(int id) async {
-    List list = await _db!.rawQuery('''
+  Future<List<TblMvExpense>> getAccExpenses(int id) async {
+    final db = await instance.database;
+    List list = await db.rawQuery('''
       SELECT * FROM tbl_mv_expense WHERE acc_id = $id
     ''');
     return list.map((e) => TblMvExpense.fromMap(e)).toList();
   }
 
-  static Future<List<TblMvIncome>> getAccIncomes(int id) async {
-    List list = await _db!.rawQuery('''
+  Future<List<TblMvIncome>> getAccIncomes(int id) async {
+    final db = await instance.database;
+    List list = await db.rawQuery('''
       SELECT * FROM tbl_mv_income WHERE acc_id = $id
     ''');
     return list.map((e) => TblMvIncome.fromMap(e)).toList();
   }
 
-  static Future<int> insertIncome(TblMvIncome income) async {
-    int result = await _db!.rawInsert('''
+  Future<int> insertIncome(TblMvIncome income) async {
+    final db = await instance.database;
+    int result = await db.rawInsert('''
       INSERT INTO tbl_mv_income (
         category_id,
         acc_id,
@@ -159,7 +203,7 @@ abstract class SqliteDB {
         ${income.categoryId},
         ${income.accId},
         ${income.value},
-        ${income.desc},
+        '${income.desc}',
         datetime('${income.createdDate}'),
         datetime('${income.modifiedDate}')
       )
@@ -167,8 +211,9 @@ abstract class SqliteDB {
     return result;
   }
 
-  static Future<int> insertExpense(TblMvExpense expense) async {
-    int result = await _db!.rawInsert('''
+  Future<int> insertExpense(TblMvExpense expense) async {
+    final db = await instance.database;
+    int result = await db.rawInsert('''
       INSERT INTO tbl_mv_expense (
         category_id,
         acc_id,
@@ -180,7 +225,7 @@ abstract class SqliteDB {
         ${expense.categoryId},
         ${expense.accId},
         ${expense.value},
-        ${expense.desc},
+        '${expense.desc}',
         datetime('${expense.createdDate}'),
         datetime('${expense.modifiedDate}')
       )
@@ -188,8 +233,9 @@ abstract class SqliteDB {
     return result;
   }
 
-  static Future<int> insertAccount(TblMvAccType account) async {
-    int result = await _db!.rawInsert('''
+  Future<int> insertAccount(TblMvAccType account) async {
+    final db = await instance.database;
+    int result = await db.rawInsert('''
       INSERT INTO tbl_mv_acc_type (
         name,
         image,
@@ -203,8 +249,9 @@ abstract class SqliteDB {
     return result;
   }
 
-  static Future<int> insertCategory(TblMvCategory category) async {
-    int result = await _db!.rawInsert('''
+  Future<int> insertCategory(TblMvCategory category) async {
+    final db = await instance.database;
+    int result = await db.rawInsert('''
       INSERT INTO tbl_mv_category (
         name,
         image,
@@ -218,8 +265,9 @@ abstract class SqliteDB {
     return result;
   }
 
-  static Future<int> modifyIncome(TblMvIncome income) async {
-    int result = await _db!.rawUpdate('''
+  Future<int> modifyIncome(TblMvIncome income) async {
+    final db = await instance.database;
+    int result = await db.rawUpdate('''
       UPDATE tbl_mv_income SET
       category_id = ${income.categoryId},
       acc_id = ${income.accId},
@@ -232,8 +280,9 @@ abstract class SqliteDB {
     return result;
   }
 
-  static Future<int> modifyExpense(TblMvExpense expense) async {
-    int result = await _db!.rawUpdate('''
+  Future<int> modifyExpense(TblMvExpense expense) async {
+    final db = await instance.database;
+    int result = await db.rawUpdate('''
       UPDATE tbl_mv_expense SET
       category_id = ${expense.categoryId},
       acc_id = ${expense.accId},
@@ -246,8 +295,9 @@ abstract class SqliteDB {
     return result;
   }
 
-  static Future<int> modifyAccount(TblMvAccType account) async {
-    int result = await _db!.rawUpdate('''
+  Future<int> modifyAccount(TblMvAccType account) async {
+    final db = await instance.database;
+    int result = await db.rawUpdate('''
       UPDATE tbl_mv_acc_type SET
         name = ${account.name},
         image = ${account.image},
@@ -257,8 +307,9 @@ abstract class SqliteDB {
     return result;
   }
 
-  static Future<int> modifyCategory(TblMvCategory category) async {
-    int result = await _db!.rawInsert('''
+  Future<int> modifyCategory(TblMvCategory category) async {
+    final db = await instance.database;
+    int result = await db.rawInsert('''
       UPDATE tbl_mv_category SET
         name = ${category.name},
         image = ${category.image},
@@ -268,32 +319,36 @@ abstract class SqliteDB {
     return result;
   }
 
-  static Future<int> deleteIncome(TblMvIncome income) async {
-    int result = await _db!.rawDelete('''
+  Future<int> deleteIncome(TblMvIncome income) async {
+    final db = await instance.database;
+    int result = await db.rawDelete('''
         DELETE FROM tbl_mv_income 
         WHERE id = ${income.id}
     ''');
     return result;
   }
 
-  static Future<int> deleteExpense(TblMvExpense expense) async {
-    int result = await _db!.rawDelete('''
+  Future<int> deleteExpense(TblMvExpense expense) async {
+    final db = await instance.database;
+    int result = await db.rawDelete('''
         DELETE FROM tbl_mv_expense 
         WHERE id = ${expense.id}
     ''');
     return result;
   }
 
-  static Future<int> deleteCategory(TblMvCategory category) async {
-    int result = await _db!.rawDelete('''
+  Future<int> deleteCategory(TblMvCategory category) async {
+    final db = await instance.database;
+    int result = await db.rawDelete('''
         DELETE FROM tbl_mv_category
         WHERE id = ${category.id}
     ''');
     return result;
   }
 
-  static Future<int> deleteAccount(TblMvAccType account) async {
-    int result = await _db!.rawDelete('''
+  Future<int> deleteAccount(TblMvAccType account) async {
+    final db = await instance.database;
+    int result = await db.rawDelete('''
         DELETE FROM tbl_mv_acc_type 
         WHERE id = ${account.id}
     ''');

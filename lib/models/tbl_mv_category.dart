@@ -77,3 +77,10 @@ class TblMvCategory extends Equatable {
   @override
   bool get stringify => true;
 }
+
+class TempCat {
+  final String name;
+  final double value;
+  final int type;
+  TempCat({required this.name, required this.type, required this.value});
+}

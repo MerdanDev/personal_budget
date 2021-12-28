@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:personal_budget/bloc/balance_bloc.dart';
-import 'package:personal_budget/screens/HomeScreen.dart';
+import 'package:personal_budget/bloc/data_bloc.dart' as d;
+import 'package:personal_budget/screens/home_screen.dart';
 
 void main() {
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -11,6 +12,7 @@ void main() {
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(create: (_) => BalanceBloc()..add(LoadEvent())),
+      BlocProvider(create: (_) => d.DataBloc()),
     ],
     child: MyApp(),
   ));

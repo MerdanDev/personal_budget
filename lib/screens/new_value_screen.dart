@@ -96,6 +96,7 @@ class _NewValueScreenState extends State<NewValueScreen> {
                           text: desc.text,
                         ),
                       );
+                      Navigator.of(context).pop();
                     } else if (widget.type == 1) {
                       BlocProvider.of<BalanceBloc>(context).add(
                         AddIncomeEvent(
@@ -105,6 +106,7 @@ class _NewValueScreenState extends State<NewValueScreen> {
                           text: desc.text,
                         ),
                       );
+                      Navigator.of(context).pop();
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -284,6 +286,7 @@ class _NewValueScreenState extends State<NewValueScreen> {
                     text: desc.text,
                   ),
                 );
+                Navigator.of(context).pop();
               } else if (widget.type == 1) {
                 BlocProvider.of<BalanceBloc>(context).add(
                   AddIncomeEvent(
@@ -293,6 +296,7 @@ class _NewValueScreenState extends State<NewValueScreen> {
                     text: desc.text,
                   ),
                 );
+                Navigator.of(context).pop();
               }
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

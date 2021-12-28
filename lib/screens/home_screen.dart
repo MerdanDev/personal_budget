@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:personal_budget/bloc/balance_bloc.dart';
-import 'package:personal_budget/screens/NewValueScreen.dart';
+import 'package:personal_budget/bloc/data_bloc.dart' as d;
+import 'package:personal_budget/models/tbl_mv_category.dart';
+import 'package:personal_budget/screens/category_screen.dart';
+import 'package:personal_budget/screens/new_value_screen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late TooltipBehavior _tooltipBehavior;
+  int index = 0;
   @override
   void initState() {
     _tooltipBehavior = TooltipBehavior(enable: true);
@@ -26,10 +30,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: BlocBuilder<BalanceBloc, BalanceState>(builder: (context, state) {
         if (state is LoadedState) {
-          List<ChartData> incomeChartData =
-              state.incomeCats.map((e) => ChartData(e.name, e.value)).toList();
-          List<ChartData> expenseChartData =
-              state.expenseCats.map((e) => ChartData(e.name, e.value)).toList();
+          List<ChartData> incomeChartData = state.incomeCats
+              .where((element) => element.value > 0)
+              .map((e) => ChartData(e.name, e.value))
+              .toList();
+          List<ChartData> expenseChartData = state.expenseCats
+              .where((element) => element.value > 0)
+              .map((e) => ChartData(e.name, e.value))
+              .toList();
+          List<TblMvCategory> currentType = index == 0
+              ? state.categories.where((element) => element.type == -1).toList()
+              : state.categories.where((element) => element.type == 1).toList();
           double sum = state.incomeCats
                   .map((e) => e.value)
                   .toList()
@@ -56,65 +67,102 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 450,
                         width: width,
                         child: PageView(
+                          onPageChanged: (int page) {
+                            setState(() {
+                              index = page;
+                            });
+                          },
                           children: [
-                            SfCircularChart(
-                              tooltipBehavior: _tooltipBehavior,
-                              legend: Legend(
-                                isVisible: true,
-                              ),
-                              series: <CircularSeries>[
-                                // Render pie chart
-                                PieSeries<ChartData, String>(
-                                  dataSource: expenseChartData,
-                                  radius: '65%',
-                                  enableTooltip: true,
-                                  pointColorMapper: (ChartData data, _) =>
-                                      data.color,
-                                  xValueMapper: (ChartData data, _) => data.x,
-                                  yValueMapper: (ChartData data, _) => data.y,
-                                  dataLabelMapper: (ChartData data, _) =>
-                                      data.x,
-                                  explode: true,
-                                  dataLabelSettings: DataLabelSettings(
-                                    isVisible: true,
-                                    labelIntersectAction:
-                                        LabelIntersectAction.shift,
-                                    labelPosition:
-                                        ChartDataLabelPosition.outside,
-                                    useSeriesColor: true,
+                            expenseChartData.isNotEmpty
+                                ? SfCircularChart(
+                                    tooltipBehavior: _tooltipBehavior,
+                                    legend: Legend(
+                                      isVisible: true,
+                                    ),
+                                    series: <CircularSeries>[
+                                      // Render pie chart
+                                      PieSeries<ChartData, String>(
+                                        dataSource: expenseChartData,
+                                        radius: '75%',
+                                        enableTooltip: true,
+                                        pointColorMapper: (ChartData data, _) =>
+                                            data.color,
+                                        xValueMapper: (ChartData data, _) =>
+                                            data.x,
+                                        yValueMapper: (ChartData data, _) =>
+                                            data.y,
+                                        dataLabelMapper: (ChartData data, _) =>
+                                            data.x,
+                                        explode: true,
+                                        dataLabelSettings: DataLabelSettings(
+                                          isVisible: true,
+                                          labelIntersectAction:
+                                              LabelIntersectAction.shift,
+                                          labelPosition:
+                                              ChartDataLabelPosition.inside,
+                                          useSeriesColor: true,
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                : Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Maglumatlar ýazylmadyk! Maglumat girizmegiňizi sizden haýyş edýäris.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                )
-                              ],
-                            ),
-                            SfCircularChart(
-                              tooltipBehavior: _tooltipBehavior,
-                              legend: Legend(
-                                isVisible: true,
-                              ),
-                              series: <CircularSeries>[
-                                // Render pie chart
-                                PieSeries<ChartData, String>(
-                                  dataSource: incomeChartData,
-                                  radius: '65%',
-                                  enableTooltip: true,
-                                  pointColorMapper: (ChartData data, _) =>
-                                      data.color,
-                                  xValueMapper: (ChartData data, _) => data.x,
-                                  yValueMapper: (ChartData data, _) => data.y,
-                                  dataLabelMapper: (ChartData data, _) =>
-                                      data.x,
-                                  explode: true,
-                                  dataLabelSettings: DataLabelSettings(
-                                    isVisible: true,
-                                    labelIntersectAction:
-                                        LabelIntersectAction.shift,
-                                    labelPosition:
-                                        ChartDataLabelPosition.outside,
-                                    useSeriesColor: true,
+                            incomeChartData.isNotEmpty
+                                ? SfCircularChart(
+                                    tooltipBehavior: _tooltipBehavior,
+                                    legend: Legend(
+                                      isVisible: true,
+                                    ),
+                                    series: <CircularSeries>[
+                                      // Render pie chart
+                                      PieSeries<ChartData, String>(
+                                        dataSource: incomeChartData,
+                                        radius: '75%',
+                                        enableTooltip: true,
+                                        pointColorMapper: (ChartData data, _) =>
+                                            data.color,
+                                        xValueMapper: (ChartData data, _) =>
+                                            data.x,
+                                        yValueMapper: (ChartData data, _) =>
+                                            data.y,
+                                        dataLabelMapper: (ChartData data, _) =>
+                                            data.x,
+                                        explode: true,
+                                        dataLabelSettings: DataLabelSettings(
+                                          isVisible: true,
+                                          labelIntersectAction:
+                                              LabelIntersectAction.shift,
+                                          labelPosition:
+                                              ChartDataLabelPosition.inside,
+                                          useSeriesColor: true,
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                : Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Maglumatlar ýazylmadyk! Maglumat girizmegiňizi sizden haýyş edýäris.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                )
-                              ],
-                            ),
                           ],
                         ),
                       ),
@@ -132,7 +180,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.all(0.0),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  BlocProvider.of<d.DataBloc>(context).add(
+                                    d.LoadEvent(
+                                      account: state.account,
+                                      category: currentType[index],
+                                    ),
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CategoryScreen(
+                                        category: currentType[index],
+                                      ),
+                                    ),
+                                  );
+                                },
                                 child: Column(
                                   children: [
                                     Container(
@@ -142,11 +205,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         shape: BoxShape.circle,
                                       ),
                                       child: Image.memory(
-                                          state.categories[index].image),
+                                          currentType[index].image),
                                     ),
                                     Container(
                                       child: Text(
-                                        state.categories[index].name,
+                                        currentType[index].name,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Colors.black,
@@ -159,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           },
-                          itemCount: state.categories.length,
+                          itemCount: currentType.length,
                         ),
                       ),
                     ),

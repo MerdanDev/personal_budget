@@ -89,42 +89,17 @@ class SqliteDB {
       ''',
     );
     List<TblMvCategory> categories = [];
-    // DefaultItem.categories
-    //     .map((e) => TblMvCategory.initMap(e))
-    //     .forEach((element) async {
-    //   categories.add(await element);
-    // });
     for (var item in DefaultItem.categories) {
       categories.add(await TblMvCategory.initMap(item));
     }
-
-    print('MerdanDev categories.length:${categories.length}');
-
-    // categories.map((e) async {
-    //   int result = await db.insert('tbl_mv_category', e.toMap());
-    //   print('MerdanDev category result is:$result');
-    // });
-
     for (var item in categories) {
       int result = await db.insert('tbl_mv_category', item.toMap());
       print('MerdanDev category result is:$result');
     }
-
     List<TblMvAccType> accounts = [];
-    // DefaultItem.accounts
-    //     .map((e) => TblMvAccType.initMap(e))
-    //     .forEach((element) async {
-    //   accounts.add(await element);
-    // });
     for (var item in DefaultItem.accounts) {
       accounts.add(await TblMvAccType.initMap(item));
     }
-
-    print('MerdanDev accounts.length:${accounts.length}');
-    // accounts.map((e) async {
-    //   int result = await db.insert('tbl_mv_acc_type', e.toMap());
-    //   print('MerdanDev account result is:$result');
-    // });
     for (var item in accounts) {
       int result = await db.insert('tbl_mv_acc_type', item.toMap());
       print('MerdanDev account result is:$result');
@@ -185,6 +160,24 @@ class SqliteDB {
     final db = await instance.database;
     List list = await db.rawQuery('''
       SELECT * FROM tbl_mv_income WHERE acc_id = $id
+    ''');
+    return list.map((e) => TblMvIncome.fromMap(e)).toList();
+  }
+
+  Future<List<TblMvExpense>> getCatExpenses(int accId, int catId) async {
+    final db = await instance.database;
+    List list = await db.rawQuery('''
+      SELECT * FROM tbl_mv_expense 
+      WHERE acc_id = $accId and category_id = $catId
+    ''');
+    return list.map((e) => TblMvExpense.fromMap(e)).toList();
+  }
+
+  Future<List<TblMvIncome>> getCatIncomes(int accId, int catId) async {
+    final db = await instance.database;
+    List list = await db.rawQuery('''
+      SELECT * FROM tbl_mv_income 
+      WHERE acc_id = $accId and category_id = $catId
     ''');
     return list.map((e) => TblMvIncome.fromMap(e)).toList();
   }

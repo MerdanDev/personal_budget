@@ -8,7 +8,7 @@ import 'package:personal_budget/models/tbl_mv_expense.dart';
 import 'package:personal_budget/models/tbl_mv_income.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/* === === === === === === === === Statesa === === === === === === === === */
+/* === === === === === === === === States === === === === === === === === */
 abstract class BalanceState extends Equatable {
   @override
   List<Object> get props => [];
@@ -21,19 +21,17 @@ class LoadingState extends BalanceState {}
 class ErrorState extends BalanceState {}
 
 class LoadedState extends BalanceState {
-  final List<TblMvExpense> expenses;
-  final List<TblMvIncome> incomes;
   final List<TblMvCategory> categories;
   final List<TblMvAccType> accounts;
   final List<TempCat> expenseCats;
   final List<TempCat> incomeCats;
+  final TblMvAccType account;
   LoadedState({
     required this.accounts,
     required this.categories,
-    required this.expenses,
-    required this.incomes,
     required this.expenseCats,
     required this.incomeCats,
+    required this.account,
   });
 }
 
@@ -91,13 +89,17 @@ class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
   List<TempCat> incomeCats = [];
 
   Stream<BalanceState> _mapLoadedToState(BalanceEvent event) async* {
+    final _sharedPref = await SharedPreferences.getInstance();
+    int accId =
+        _sharedPref.getInt(SharedPrefKeys.accId) ?? SharedPrefKeys.defaultAcc;
+    TblMvAccType account =
+        accounts.firstWhere((element) => element.id == accId);
     yield LoadedState(
       accounts: accounts,
       categories: categories,
-      expenses: expenses,
-      incomes: incomes,
       incomeCats: incomeCats,
       expenseCats: expenceCats,
+      account: account,
     );
   }
 
@@ -115,39 +117,24 @@ class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
       expenceCats = categories.where((element) => element.type == -1).map((e) {
         double value = 0;
         if (expenses.isNotEmpty) {
-          // value = expenses
-          //     .where((element) => element.categoryId == e.id)
-          //     .map((e) => e.value)
-          //     .toList()
-          //     .reduce((value, element) => value + element);
           for (var item in expenses) {
             if (item.categoryId == e.id) {
               value += item.value;
             }
           }
         }
-        //  = incomes.;
         return TempCat(name: e.name, type: e.type, value: value);
       }).toList();
 
       incomeCats = categories.where((element) => element.type == 1).map((e) {
         double value = 0;
         if (incomes.isNotEmpty) {
-          // value = incomes
-          //     .where((element) => element.categoryId == e.id)
-          //     .map((e) => e.value)
-          //     .toList()
-          //     .reduce((value, element) => value + element);
           for (var item in incomes) {
-            print('Merdan item.categoryId: ${item.categoryId}');
-            print('Merdan categoryId: ${e.id}');
             if (item.categoryId == e.id) {
               value += item.value;
             }
           }
         }
-        print('MerdanDev value: $value');
-        //  = incomes.;
         return TempCat(name: e.name, type: e.type, value: value);
       }).toList();
 
@@ -160,6 +147,8 @@ class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
           accId: event.accId,
           value: event.value,
           desc: event.text,
+          createdDate: DateTime.now(),
+          modifiedDate: DateTime.now(),
         ),
       );
       print('MerdanDev insertExpense result is $result');
@@ -167,18 +156,18 @@ class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
       expenceCats = categories.where((element) => element.type == -1).map((e) {
         double value = 0;
         if (expenses.isNotEmpty) {
-          value = expenses
-              .map((e) => e.value)
-              .toList()
-              .reduce((value, element) => value + element);
+          for (var item in expenses) {
+            if (item.categoryId == e.id) {
+              value += item.value;
+            }
+          }
         }
-        //  = incomes.;
+        print('MerdanDev value: $value');
         return TempCat(name: e.name, type: e.type, value: value);
       }).toList();
 
       yield* _mapLoadedToState(event);
     } else if (event is AddIncomeEvent) {
-      print('MerdanDev catId:${event.catId}');
       int result = await db.insertIncome(
         TblMvIncome(
           id: 0,
@@ -186,19 +175,21 @@ class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
           accId: event.accId,
           value: event.value,
           desc: event.text,
+          createdDate: DateTime.now(),
+          modifiedDate: DateTime.now(),
         ),
       );
       print('MerdanDev insertIncome result is $result');
       incomes = await db.getAccIncomes(accId);
       incomeCats = categories.where((element) => element.type == 1).map((e) {
         double value = 0;
-        if (expenses.isNotEmpty) {
-          value = incomes
-              .map((e) => e.value)
-              .toList()
-              .reduce((value, element) => value + element);
+        if (incomes.isNotEmpty) {
+          for (var item in incomes) {
+            if (item.categoryId == e.id) {
+              value += item.value;
+            }
+          }
         }
-        //  = incomes.;
         return TempCat(name: e.name, type: e.type, value: value);
       }).toList();
       yield* _mapLoadedToState(event);

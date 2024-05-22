@@ -57,3 +57,27 @@ class ChangeDateFilter extends CounterEvent {
   @override
   List<Object?> get props => [dateFilter];
 }
+
+class CategoryUpdate extends CounterEvent {
+  CategoryUpdate({required this.category});
+  final CounterCategory category;
+
+  @override
+  List<Object?> get props => [category];
+}
+
+class CategoryDelete extends CounterEvent {
+  CategoryDelete({required this.uuid});
+  final String uuid;
+
+  @override
+  List<Object?> get props => [uuid];
+}
+
+class RestoreBackUp extends CounterEvent {
+  RestoreBackUp({required this.list});
+  final List<IncomeExpense> list;
+
+  @override
+  List<Object?> get props => [list];
+}

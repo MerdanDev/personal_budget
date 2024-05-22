@@ -9,15 +9,6 @@ class CounterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CounterView();
-  }
-}
-
-class CounterView extends StatelessWidget {
-  const CounterView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     // final l10n = context.l10n;
     return Scaffold(
       body: CustomScrollView(
@@ -140,40 +131,60 @@ class _CounterDataViewState extends State<CounterDataView> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final element = state.data[index];
-                return ListTile(
-                  leading: element.amount > 0
-                      ? const Icon(
-                          Icons.arrow_upward_rounded,
-                          color: Colors.greenAccent,
-                        )
-                      : const Icon(
-                          Icons.arrow_downward_rounded,
-                          color: Colors.redAccent,
-                        ),
-                  title: Text(
-                    '${element.amount.toStringAsFixed(2)}'
-                    ' : ${element.title ?? ''}',
+                return Dismissible(
+                  key: Key(element.uuid),
+                  background: ColoredBox(
+                    color: Colors.red.withOpacity(0.4),
                   ),
-                  subtitle: element.description != null
-                      ? Text(element.description!)
-                      : null,
-                  trailing: IconButton(
-                    onPressed: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (context) {
-                          return IncomeExpenseDialog(
-                            isMinus: element.amount < 0,
-                            value: element,
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.edit),
+                  confirmDismiss: (direction) async {
+                    final result = await showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return const DeleteDialog();
+                      },
+                    );
+                    return result;
+                  },
+                  onDismissed: (direction) {
+                    context.read<CounterBloc>().add(
+                          RemoveEvent(element.uuid),
+                        );
+                  },
+                  child: ListTile(
+                    leading: element.amount > 0
+                        ? const Icon(
+                            Icons.arrow_upward_rounded,
+                            color: Colors.greenAccent,
+                          )
+                        : const Icon(
+                            Icons.arrow_downward_rounded,
+                            color: Colors.redAccent,
+                          ),
+                    title: Text(
+                      '${element.amount.toStringAsFixed(2)}'
+                      ' : ${element.title ?? ''}',
+                    ),
+                    subtitle: element.description != null
+                        ? Text(element.description!)
+                        : null,
+                    trailing: IconButton(
+                      onPressed: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (context) {
+                            return IncomeExpenseDialog(
+                              isMinus: element.amount < 0,
+                              value: element,
+                            );
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.edit),
+                    ),
+                    // trailing: element.category != null
+                    //     ? Icon(IconData(element.category!.iconCode!), )
+                    //     : null,
                   ),
-                  // trailing: element.category != null
-                  //     ? Icon(IconData(element.category!.iconCode!), )
-                  //     : null,
                 );
               },
               childCount: state.data.length,
@@ -181,6 +192,34 @@ class _CounterDataViewState extends State<CounterDataView> {
           );
         }
       },
+    );
+  }
+}
+
+class DeleteDialog extends StatelessWidget {
+  const DeleteDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog.adaptive(
+      icon: const Icon(Icons.info_outline),
+      title: const Text(
+        'Do you want to delete',
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+          child: const Text('Yes'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context, false);
+          },
+          child: const Text('No'),
+        ),
+      ],
     );
   }
 }

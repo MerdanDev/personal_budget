@@ -27,6 +27,22 @@ class IncomeExpense extends Equatable {
       updatedAt: DateTime.parse(map['updatedAt'] as String),
     );
   }
+
+  factory IncomeExpense.fromList(List<String> data) {
+    return IncomeExpense(
+      uuid: data[0],
+      amount: double.parse(data[1]),
+      title: data[2].isNotEmpty ? data[2] : null,
+      description: data[3].isNotEmpty ? data[3] : null,
+      updatedAt: DateTime.parse(data[4]),
+      createdAt: DateTime.parse(data[5]),
+      category: data.length == 13
+          ? CounterCategory.fromList(
+              data.sublist(6),
+            )
+          : null,
+    );
+  }
   //</editor-fold>
 
   final String uuid;
@@ -46,14 +62,15 @@ class IncomeExpense extends Equatable {
   //<editor-fold desc="Data Methods">
   @override
   String toString() {
-    return 'IncomeExpense{ uuid: $uuid, '
+    return 'IncomeExpense( '
+        "uuid: '$uuid', "
         'amount: $amount, '
-        'title: $title, '
-        'description: $description, '
+        "title: '$title', "
+        "description: '$description', "
         'category: $category, '
-        'createdAt: $createdAt, '
-        'updatedAt: $updatedAt, '
-        '}';
+        "createdAt: DateTime.parse('$createdAt'), "
+        "updatedAt: DateTime.parse('$updatedAt'), "
+        ')';
   }
 
   IncomeExpense copyWith({
@@ -74,6 +91,18 @@ class IncomeExpense extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
+  }
+
+  List<String> toListString() {
+    return [
+      uuid,
+      amount.toString(),
+      title ?? '',
+      description ?? '',
+      updatedAt.toString(),
+      createdAt.toString(),
+      if (category != null) ...category!.toListString(),
+    ];
   }
 
   Map<String, dynamic> toMap() {

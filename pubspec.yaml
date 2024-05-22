@@ -8,14 +8,19 @@ environment:
 
 dependencies:
   bloc: ^8.1.3
+  calendar_view: ^1.1.0
   equatable: ^2.0.5
+  file_picker: ^8.0.3
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.4
   flutter_localizations:
     sdk: flutter
   intl: ^0.18.1
+  path_provider: ^2.1.3
+  permission_handler: ^11.3.1
   shared_preferences: ^2.2.2
+  syncfusion_flutter_charts: ^25.2.4
   uuid: ^4.3.3
 
 dev_dependencies:

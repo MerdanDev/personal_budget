@@ -11,7 +11,8 @@ part 'event.dart';
 part 'state.dart';
 
 class CounterBloc extends Bloc<CounterEvent, CounterState> {
-  CounterBloc()
+  factory CounterBloc() => instance;
+  CounterBloc._internal()
       : super(
           const CounterState(
             data: [],
@@ -119,8 +120,77 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
       );
     });
 
+    on<CategoryUpdate>((event, emit) {
+      final result = data.map(
+        (e) {
+          if (e.category?.uuid == event.category.uuid) {
+            return e.copyWith(category: event.category);
+          } else {
+            return e;
+          }
+        },
+      ).toList();
+      data
+        ..clear()
+        ..addAll(result);
+      CounterRepository.setIncomeExpenseList(data);
+      emit(
+        CounterState(
+          data: [...filterByDate()],
+          dateFilter: dateFilter,
+          loading: false,
+        ),
+      );
+    });
+
+    on<CategoryDelete>((event, emit) {
+      final result = data.map(
+        (e) {
+          if (e.category?.uuid == event.uuid) {
+            return IncomeExpense(
+              uuid: e.uuid,
+              amount: e.amount,
+              title: e.title,
+              description: e.description,
+              createdAt: e.createdAt,
+              updatedAt: e.updatedAt,
+            );
+          } else {
+            return e;
+          }
+        },
+      ).toList();
+      data
+        ..clear()
+        ..addAll(result);
+      CounterRepository.setIncomeExpenseList(data);
+      emit(
+        CounterState(
+          data: [...filterByDate()],
+          dateFilter: dateFilter,
+          loading: false,
+        ),
+      );
+    });
+
+    on<RestoreBackUp>(
+      (event, emit) {
+        data.addAll(event.list);
+        CounterRepository.setIncomeExpenseList(data);
+        emit(
+          CounterState(
+            data: [...filterByDate()],
+            dateFilter: dateFilter,
+            loading: false,
+          ),
+        );
+      },
+    );
+
     add(InitEvent());
   }
+
+  static CounterBloc instance = CounterBloc._internal();
 
   final List<IncomeExpense> data = [];
   DateFilter dateFilter = DateFilter.all;
@@ -129,11 +199,11 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
     return data.reversed.where(
       (element) {
         final now = DateTime.now();
-        print('Is same week ${isSameWeek(
-          now,
-          element.createdAt,
-        )} now:$now, '
-            'element:${element.createdAt}');
+        // print('Is same week ${isSameWeek(
+        //   now,
+        //   element.createdAt,
+        // )} now:$now, '
+        //     'element:${element.createdAt}');
         if (dateFilter == DateFilter.all) {
           return true;
         } else if (dateFilter == DateFilter.year &&

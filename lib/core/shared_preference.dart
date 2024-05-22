@@ -15,6 +15,14 @@ class SingletonSharedPreference {
 
   final SharedPreferences _pref;
 
+  static String? loadLangCode() {
+    return instance._pref.getString(KeyData.languageCode);
+  }
+
+  static Future<bool> setLangCode(String code) {
+    return instance._pref.setString(KeyData.languageCode, code);
+  }
+
   static String? loadIncomeExpenseList() {
     return instance._pref.getString(KeyData.incomeExpenseList);
   }

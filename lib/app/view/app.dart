@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wallet/core/color_schemes.g.dart';
-import 'package:wallet/counter/counter.dart';
+import 'package:wallet/home/home.dart';
 import 'package:wallet/l10n/l10n.dart';
+import 'package:wallet/l10n/localization_override.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -21,7 +22,11 @@ class App extends StatelessWidget {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const CounterPage(),
+      home: LocalizationOverride(
+        builder: (context) {
+          return const HomeScreen();
+        },
+      ),
     );
   }
 }

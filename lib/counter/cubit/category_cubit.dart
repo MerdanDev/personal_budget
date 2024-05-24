@@ -22,18 +22,18 @@ class CounterCategoryCubit extends Cubit<List<CounterCategory>> {
   }) {
     final uuid = const Uuid().v1();
     final now = DateTime.now();
-    final categories = state
-      ..add(
-        CounterCategory(
-          uuid: uuid,
-          name: name,
-          type: type,
-          colorCode: colorCode,
-          iconCode: iconCode,
-          createdAt: now,
-          updatedAt: now,
-        ),
-      );
+    final categories = [
+      ...state,
+      CounterCategory(
+        uuid: uuid,
+        name: name,
+        type: type,
+        colorCode: colorCode,
+        iconCode: iconCode,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    ];
     CounterRepository.setCounterCategoryList(categories);
     emit(categories);
   }

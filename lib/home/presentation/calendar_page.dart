@@ -1,7 +1,9 @@
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
+import 'package:wallet/l10n/l10n.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -40,6 +42,11 @@ class _CalendarPageState extends State<CalendarPage> {
           date: date,
           backgroundColor: cls.primaryContainer,
           iconColor: cls.onPrimaryContainer,
+          dateStringBuilder: (date, {secondaryDate}) {
+            final locale = context.l10n.localeName;
+            return '${date.year} '
+                '${DateFormat('MMMM', locale).format(date)}';
+          },
         ),
         onCellTap: (events, date) {
           Navigator.of(context).push(
@@ -121,9 +128,14 @@ class _CalendarDayScreenState extends State<CalendarDayScreen> {
   @override
   Widget build(BuildContext context) {
     final cls = Theme.of(context).colorScheme;
+    final locale = context.l10n.localeName;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.date}'),
+        title: Text(
+          '${widget.date.year} '
+          '${DateFormat('MMMM', locale).format(widget.date)} '
+          '${widget.date.day}',
+        ),
       ),
       body: DayView<IncomeExpense>(
         initialDay: widget.date,

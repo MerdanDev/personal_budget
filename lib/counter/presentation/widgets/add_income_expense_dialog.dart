@@ -7,6 +7,7 @@ import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
 import 'package:wallet/counter/presentation/widgets/add_category_dialog.dart';
 import 'package:wallet/counter/presentation/widgets/category_icon_widget.dart';
+import 'package:wallet/l10n/l10n.dart';
 
 class IncomeExpenseDialog extends StatefulWidget {
   const IncomeExpenseDialog({
@@ -178,7 +179,7 @@ class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
                 fontSize: 20,
               ),
               decoration: InputDecoration(
-                hintText: 'title',
+                hintText: context.l10n.title,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -296,7 +297,7 @@ class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
                 fontSize: 20,
               ),
               decoration: InputDecoration(
-                hintText: 'description',
+                hintText: context.l10n.description,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Theme.of(context).colorScheme.primary,

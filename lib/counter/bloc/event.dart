@@ -42,6 +42,18 @@ class UpdateIncomeExpenseEvent extends CounterEvent {
   List<Object?> get props => [uuid];
 }
 
+class SelectUpdateCategory extends CounterEvent {
+  SelectUpdateCategory({
+    required this.uuids,
+    required this.category,
+  });
+
+  final List<String> uuids;
+  final CounterCategory category;
+  @override
+  List<Object?> get props => [uuids];
+}
+
 class RemoveEvent extends CounterEvent {
   RemoveEvent(this.uuid);
   final String uuid;

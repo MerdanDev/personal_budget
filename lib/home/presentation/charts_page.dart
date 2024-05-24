@@ -4,7 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:wallet/core/utils.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
+import 'package:wallet/counter/cubit/category_cubit.dart';
+import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
+import 'package:wallet/l10n/l10n.dart';
 
 class CandleChartPage extends StatefulWidget {
   const CandleChartPage({super.key});
@@ -15,6 +18,7 @@ class CandleChartPage extends StatefulWidget {
 
 class CandleChartPageState extends State<CandleChartPage> {
   late bool isShowingMainData;
+  int current = 0;
 
   @override
   void initState() {
@@ -24,87 +28,206 @@ class CandleChartPageState extends State<CandleChartPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CounterBloc, CounterState>(
-      bloc: CounterBloc.instance,
-      builder: (context, state) {
-        final data = CounterBloc.instance.data
-          ..sort(
-            (a, b) => a.createdAt.compareTo(b.createdAt),
-          );
-        final date = data.first.createdAt;
-        final now = DateTime.now();
-        final itemCount =
-            (now.year * 12 + now.month) - (date.year * 12 + date.month) + 1;
-        final pageDataList = <ChartPageDate<IncomeExpense>>[];
-
-        for (var i = 0; i < itemCount; i++) {
-          final monthCount = (date.year * 12 + date.month) + i;
-          final pageDate = DateTime(monthCount ~/ 12, monthCount % 12);
-          final pageData = data
-              .where(
-                (element) => isSameMonth(
-                  pageDate,
-                  element.createdAt,
-                ),
-              )
-              .toList();
-          final filtered = data
-              .where((e) => pageDate.compareTo(e.createdAt) == 1)
-              .map((e) => e.amount);
-          final amount =
-              filtered.isNotEmpty ? filtered.reduce((a, b) => a + b) : null;
-          pageDataList.add(
-            ChartPageDate(
-              startingAmount: amount,
-              data: pageData,
-              date: pageDate,
-            ),
-          );
-        }
-
-        return SafeArea(
-          child: PageView.builder(
-            itemBuilder: (context, index) {
-              final pageData = pageDataList[index];
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    '${pageData.date.year} '
-                    '${DateFormat('MMMM').format(pageData.date)}',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(
-                    height: 37,
-                  ),
-                  SizedBox(
-                    height: 350,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 16, left: 6),
-                      child: CandleChartWidget(
-                        data: pageData.data,
-                        date: pageData.date,
-                        amount: pageData.startingAmount,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                ],
-              );
+    return DefaultTabController(
+      length: 2,
+      initialIndex: current,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(context.l10n.charts),
+          bottom: TabBar(
+            onTap: (value) {
+              setState(() {
+                current = value;
+              });
             },
-            itemCount: pageDataList.length,
+            tabs: [
+              Tab(
+                text: context.l10n.candleChart,
+                icon: const Icon(Icons.candlestick_chart_outlined),
+              ),
+              Tab(
+                text: context.l10n.radialChart,
+                icon: const Icon(Icons.radar_outlined),
+              ),
+            ],
+          ),
+        ),
+        body: BlocBuilder<CounterBloc, CounterState>(
+          bloc: CounterBloc.instance,
+          builder: (context, state) {
+            final data = CounterBloc.instance.data
+              ..sort(
+                (a, b) => a.createdAt.compareTo(b.createdAt),
+              );
+            final date = data.first.createdAt;
+            final now = DateTime.now();
+            final itemCount =
+                (now.year * 12 + now.month) - (date.year * 12 + date.month) + 1;
+            final pageDataList = <ChartPageDate<IncomeExpense>>[];
+
+            for (var i = 0; i < itemCount; i++) {
+              final monthCount = (date.year * 12 + date.month) + i;
+              final pageDate = DateTime(monthCount ~/ 12, monthCount % 12);
+              final pageData = data
+                  .where(
+                    (element) => isSameMonth(
+                      pageDate,
+                      element.createdAt,
+                    ),
+                  )
+                  .toList();
+              final filtered = data
+                  .where((e) => pageDate.compareTo(e.createdAt) == 1)
+                  .map((e) => e.amount);
+              final amount =
+                  filtered.isNotEmpty ? filtered.reduce((a, b) => a + b) : null;
+              pageDataList.insert(
+                0,
+                ChartPageDate(
+                  startingAmount: amount,
+                  data: pageData,
+                  date: pageDate,
+                ),
+              );
+            }
+
+            return SafeArea(
+              child: PageView.builder(
+                reverse: true,
+                itemBuilder: (context, index) {
+                  final pageData = pageDataList[index];
+                  final locale = context.l10n.localeName;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        '${pageData.date.year} '
+                        '${DateFormat('MMMM', locale).format(pageData.date)}',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      SizedBox(
+                        height: 350,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 16, left: 6),
+                          child: current == 0
+                              ? CandleChartWidget(
+                                  data: pageData.data,
+                                  date: pageData.date,
+                                  amount: pageData.startingAmount,
+                                )
+                              : PieChartWidget(
+                                  data: pageData.data,
+                                ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  );
+                },
+                itemCount: pageDataList.length,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class PieChartWidget extends StatefulWidget {
+  const PieChartWidget({required this.data, super.key});
+
+  final List<IncomeExpense> data;
+
+  @override
+  State<PieChartWidget> createState() => _PieChartWidgetState();
+}
+
+class _PieChartWidgetState extends State<PieChartWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final chartData = <_PieChartData>[];
+    final categories = CounterCategoryCubit.instance.state;
+    var income = .0;
+
+    for (final category in categories.where(
+      (e) => e.type == CategoryType.expense,
+    )) {
+      final mapped = widget.data
+          .where((e) => e.category == category)
+          .map((e) => e.amount)
+          .toList();
+      if (mapped.isNotEmpty) {
+        final amount = mapped.reduce((a, b) => a + b);
+        chartData.add(
+          _PieChartData(
+            category.name,
+            amount > 0 ? amount : amount * -1,
+            mapped.length,
+            category.colorCode != null ? Color(category.colorCode!) : null,
           ),
         );
-      },
+      }
+    }
+    for (final category in categories.where(
+      (e) => e.type == CategoryType.income,
+    )) {
+      final mapped = widget.data
+          .where((e) => e.category == category)
+          .map((e) => e.amount)
+          .toList();
+      if (mapped.isNotEmpty) {
+        income += mapped.reduce((a, b) => a + b);
+      }
+    }
+    chartData.add(
+      _PieChartData(context.l10n.income, income, 1, Colors.green),
+    );
+    // final maxCount =
+    //     chartData.map((e) => e.count).reduce((a, b) => a > b ? a : b);
+
+    final maxAmount = chartData.map((e) => e.y).reduce((a, b) => a > b ? a : b);
+    return SfCircularChart(
+      tooltipBehavior: TooltipBehavior(
+        enable: true,
+      ),
+      series: <CircularSeries<_PieChartData, String>>[
+        RadialBarSeries<_PieChartData, String>(
+          dataSource: chartData,
+          useSeriesColor: true,
+          trackOpacity: 0.3,
+          cornerStyle: CornerStyle.bothCurve,
+          pointColorMapper: (data, _) => data.color,
+          xValueMapper: (data, _) => data.x,
+          yValueMapper: (data, _) => data.y,
+          dataLabelMapper: (data, _) => data.x,
+          maximumValue: maxAmount,
+          dataLabelSettings: DataLabelSettings(
+            isVisible: true,
+            textStyle: Theme.of(context).textTheme.labelSmall,
+            // connectorLineSettings: ConnectorLineSettings(
+            //   type: ConnectorType.curve,
+            //   length: '25%',
+            // ),
+          ),
+          // pointRadiusMapper: (data, _) => '${(100 / maxCount) * data.count}%',
+        ),
+      ],
     );
   }
 }
@@ -126,7 +249,7 @@ class CandleChartWidget extends StatefulWidget {
 }
 
 class _CandleChartWidgetState extends State<CandleChartWidget> {
-  final dataSource = <_ChartData>[];
+  final dataSource = <_CandleChartData>[];
   late final TooltipBehavior _tooltip;
   late double current;
   @override
@@ -175,7 +298,7 @@ class _CandleChartWidgetState extends State<CandleChartWidget> {
           open = close = high = low = dataSource.last.close;
         }
       }
-      dataSource.add(_ChartData(day.toString(), high, low, open, close));
+      dataSource.add(_CandleChartData(day.toString(), high, low, open, close));
     }
 
     _tooltip = TooltipBehavior(enable: true);
@@ -192,24 +315,24 @@ class _CandleChartWidgetState extends State<CandleChartWidget> {
         interval: 10,
       ),
       tooltipBehavior: _tooltip,
-      series: <CartesianSeries<_ChartData, String>>[
-        CandleSeries<_ChartData, String>(
+      series: <CartesianSeries<_CandleChartData, String>>[
+        CandleSeries<_CandleChartData, String>(
           dataSource: dataSource,
-          xValueMapper: (_ChartData data, _) => data.x,
-          highValueMapper: (_ChartData data, _) => data.high,
-          lowValueMapper: (_ChartData data, _) => data.low,
-          openValueMapper: (_ChartData data, _) => data.open,
-          closeValueMapper: (_ChartData data, _) => data.close,
-          pointColorMapper: (_ChartData data, _) {
-            if(data.open > data.close){
+          xValueMapper: (_CandleChartData data, _) => data.x,
+          highValueMapper: (_CandleChartData data, _) => data.high,
+          lowValueMapper: (_CandleChartData data, _) => data.low,
+          openValueMapper: (_CandleChartData data, _) => data.open,
+          closeValueMapper: (_CandleChartData data, _) => data.close,
+          pointColorMapper: (_CandleChartData data, _) {
+            if (data.open > data.close) {
               return Colors.red;
-            } else if(data.open < data.close) {
+            } else if (data.open < data.close) {
               return Colors.green;
             } else {
               return Colors.grey;
             }
           },
-          name: 'Changes',
+          name: context.l10n.counter,
         ),
       ],
     );
@@ -227,12 +350,20 @@ class ChartPageDate<E> {
   final double? startingAmount;
 }
 
-class _ChartData {
-  _ChartData(this.x, this.high, this.low, this.open, this.close);
+class _CandleChartData {
+  _CandleChartData(this.x, this.high, this.low, this.open, this.close);
 
   final String x;
   final double high;
   final double low;
   final double open;
   final double close;
+}
+
+class _PieChartData {
+  _PieChartData(this.x, this.y, this.count, [this.color]);
+  final String x;
+  final double y;
+  final int count;
+  final Color? color;
 }

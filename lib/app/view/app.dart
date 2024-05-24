@@ -22,11 +22,14 @@ class App extends StatelessWidget {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: LocalizationOverride(
-        builder: (context) {
-          return const HomeScreen();
-        },
-      ),
+      home: const HomeScreen(),
+      builder: (context, child) {
+        return LocalizationOverride(
+          builder: (context) {
+            return child ?? const SizedBox.shrink();
+          },
+        );
+      },
     );
   }
 }

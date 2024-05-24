@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet/counter/cubit/category_cubit.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/presentation/counter_page.dart';
+import 'package:wallet/counter/presentation/income_expense_screen.dart';
 import 'package:wallet/counter/presentation/widgets/add_category_dialog.dart';
 import 'package:wallet/counter/presentation/widgets/category_icon_widget.dart';
+import 'package:wallet/l10n/l10n.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
@@ -18,7 +20,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categories'),
+        title: Text(context.l10n.categories),
         actions: [
           IconButton(
             onPressed: () {
@@ -81,6 +83,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   );
                 },
                 child: ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<IncomeExpenseScreen>(
+                        builder: (context) {
+                          return IncomeExpenseScreen(category: category);
+                        },
+                      ),
+                    );
+                  },
                   leading: category.iconCode != null
                       ? CategoryIcon(
                           iconCode: category.iconCode!,

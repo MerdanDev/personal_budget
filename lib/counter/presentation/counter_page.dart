@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet/counter/counter.dart';
 import 'package:wallet/counter/domain/date_filter.dart';
 import 'package:wallet/counter/presentation/widgets/add_income_expense_dialog.dart';
+import 'package:wallet/counter/presentation/widgets/income_expense_widget.dart';
+import 'package:wallet/l10n/l10n.dart';
 
 class CounterPage extends StatelessWidget {
   const CounterPage({super.key});
@@ -44,6 +46,11 @@ class CounterPage extends StatelessWidget {
             ),
           ),
           const CounterDataView(),
+          const SliverToBoxAdapter(
+            child: SizedBox(
+              height: 250,
+            ),
+          ),
         ],
       ),
       floatingActionButton: Column(
@@ -63,7 +70,7 @@ class CounterPage extends StatelessWidget {
               );
             },
             icon: const Icon(Icons.add),
-            label: const Text('Income'),
+            label: Text(context.l10n.income),
           ),
           const SizedBox(height: 8),
           FloatingActionButton.large(
@@ -131,61 +138,7 @@ class _CounterDataViewState extends State<CounterDataView> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final element = state.data[index];
-                return Dismissible(
-                  key: Key(element.uuid),
-                  background: ColoredBox(
-                    color: Colors.red.withOpacity(0.4),
-                  ),
-                  confirmDismiss: (direction) async {
-                    final result = await showDialog<bool>(
-                      context: context,
-                      builder: (context) {
-                        return const DeleteDialog();
-                      },
-                    );
-                    return result;
-                  },
-                  onDismissed: (direction) {
-                    context.read<CounterBloc>().add(
-                          RemoveEvent(element.uuid),
-                        );
-                  },
-                  child: ListTile(
-                    leading: element.amount > 0
-                        ? const Icon(
-                            Icons.arrow_upward_rounded,
-                            color: Colors.greenAccent,
-                          )
-                        : const Icon(
-                            Icons.arrow_downward_rounded,
-                            color: Colors.redAccent,
-                          ),
-                    title: Text(
-                      '${element.amount.toStringAsFixed(2)}'
-                      ' : ${element.title ?? ''}',
-                    ),
-                    subtitle: element.description != null
-                        ? Text(element.description!)
-                        : null,
-                    trailing: IconButton(
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (context) {
-                            return IncomeExpenseDialog(
-                              isMinus: element.amount < 0,
-                              value: element,
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.edit),
-                    ),
-                    // trailing: element.category != null
-                    //     ? Icon(IconData(element.category!.iconCode!), )
-                    //     : null,
-                  ),
-                );
+                return IncomeExpenseWidget(element: element);
               },
               childCount: state.data.length,
             ),
@@ -203,21 +156,19 @@ class DeleteDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog.adaptive(
       icon: const Icon(Icons.info_outline),
-      title: const Text(
-        'Do you want to delete',
-      ),
+      title: Text(context.l10n.deleteTitle),
       actions: [
         ElevatedButton(
           onPressed: () {
             Navigator.pop(context, true);
           },
-          child: const Text('Yes'),
+          child: Text(context.l10n.yes),
         ),
         ElevatedButton(
           onPressed: () {
             Navigator.pop(context, false);
           },
-          child: const Text('No'),
+          child: Text(context.l10n.no),
         ),
       ],
     );

@@ -92,6 +92,36 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
       },
     );
 
+    on<SelectUpdateCategory>(
+      (event, emit) {
+        final now = DateTime.now();
+        for (final uuid in event.uuids) {
+          final element = data.firstWhere(
+            (element) => element.uuid == uuid,
+          );
+          final index = data.indexWhere((element) => element.uuid == uuid);
+          data
+            ..removeAt(index)
+            ..insert(
+              index,
+              element.copyWith(
+                category: event.category,
+                updatedAt: now,
+              ),
+            );
+        }
+
+        CounterRepository.setIncomeExpenseList(data);
+        emit(
+          CounterState(
+            data: [...filterByDate()],
+            dateFilter: dateFilter,
+            loading: false,
+          ),
+        );
+      },
+    );
+
     on<RemoveEvent>(
       (event, emit) {
         data.removeWhere((element) => element.uuid == event.uuid);

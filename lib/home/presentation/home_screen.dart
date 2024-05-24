@@ -3,6 +3,7 @@ import 'package:wallet/counter/counter.dart';
 import 'package:wallet/home/presentation/calendar_page.dart';
 import 'package:wallet/home/presentation/charts_page.dart';
 import 'package:wallet/home/presentation/settings_page.dart';
+import 'package:wallet/l10n/l10n.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,22 +43,22 @@ class _HomeScreenState extends State<HomeScreen> {
             curve: Curves.ease,
           );
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.calculate_outlined),
-            label: 'Counter',
+            icon: const Icon(Icons.calculate_outlined),
+            label: context.l10n.counter,
           ),
           NavigationDestination(
-            icon: Icon(Icons.calendar_month),
-            label: 'Calendar',
+            icon: const Icon(Icons.calendar_month),
+            label: context.l10n.calendar,
           ),
           NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            label: 'Charts',
+            icon: const Icon(Icons.bar_chart_outlined),
+            label: context.l10n.charts,
           ),
           NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            label: 'Settings',
+            icon: const Icon(Icons.settings_outlined),
+            label: context.l10n.settings,
           ),
         ],
       ),

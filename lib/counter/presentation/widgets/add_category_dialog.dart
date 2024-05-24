@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wallet/counter/cubit/category_cubit.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
+import 'package:wallet/l10n/l10n.dart';
 
 class AddCounterCategoryDialog extends StatefulWidget {
   const AddCounterCategoryDialog({
@@ -72,8 +73,6 @@ class _AddCounterCategoryDialogState extends State<AddCounterCategoryDialog> {
     }
   }
 
-  Widget iconButtonText = const Text('icon');
-
   Future<void> onPressedForColor() async {
     final value = await showModalBottomSheet<int>(
       context: context,
@@ -93,10 +92,10 @@ class _AddCounterCategoryDialogState extends State<AddCounterCategoryDialog> {
     }
   }
 
-  Widget colorButtonText = const Text('color');
-
   @override
   Widget build(BuildContext context) {
+    final iconButtonText = Text(context.l10n.icon);
+    final colorButtonText = Text(context.l10n.color);
     return Dialog.fullscreen(
       child: Scaffold(
         appBar: AppBar(),
@@ -112,7 +111,7 @@ class _AddCounterCategoryDialogState extends State<AddCounterCategoryDialog> {
                 fontSize: 20,
               ),
               decoration: InputDecoration(
-                hintText: 'name',
+                hintText: context.l10n.inputName,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -170,7 +169,7 @@ class _AddCounterCategoryDialogState extends State<AddCounterCategoryDialog> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: onSubmit,
-              child: const Text('Submit'),
+              child: Text(context.l10n.add),
             ),
           ],
         ),

@@ -13,7 +13,7 @@ dependencies:
   file_picker: ^8.0.3
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.4
+  flutter_bloc: ^8.1.5
   flutter_localizations:
     sdk: flutter
   intl: ^0.18.1

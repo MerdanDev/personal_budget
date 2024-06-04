@@ -55,11 +55,17 @@ class CandleChartPageState extends State<CandleChartPage> {
         body: BlocBuilder<CounterBloc, CounterState>(
           bloc: CounterBloc.instance,
           builder: (context, state) {
+            if (CounterBloc.instance.data.isEmpty) {
+              return Center(
+                child: Text(context.l10n.noData),
+              );
+            }
             final data = CounterBloc.instance.data
               ..sort(
                 (a, b) => a.createdAt.compareTo(b.createdAt),
               );
-            final date = data.first.createdAt;
+            final date =
+                data.isNotEmpty ? data.first.createdAt : DateTime.now();
             final now = DateTime.now();
             final itemCount =
                 (now.year * 12 + now.month) - (date.year * 12 + date.month) + 1;
@@ -259,7 +265,11 @@ class _CandleChartWidgetState extends State<CandleChartWidget> {
     final lastDay = isSameMonth(widget.date, today)
         ? today.day
         : DateTime(widget.date.year, widget.date.month + 1, 0).day;
-    var day = widget.amount != null ? 1 : widget.data.first.createdAt.day;
+    var day = widget.amount != null
+        ? 1
+        : widget.data.isNotEmpty
+            ? widget.data.first.createdAt.day
+            : 1;
     for (; day <= lastDay; day++) {
       final numbers = <double>[];
       for (var i = 0; i < widget.data.length; i++) {

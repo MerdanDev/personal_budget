@@ -54,10 +54,7 @@ class IncomeExpense extends Equatable {
   final DateTime updatedAt;
 
   @override
-  List<Object?> get props => [
-        uuid,
-        updatedAt,
-      ];
+  List<Object?> get props => [uuid, updatedAt];
 
   //<editor-fold desc="Data Methods">
   @override

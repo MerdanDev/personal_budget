@@ -1,5 +1,11 @@
 {
   "@@locale": "tk",
+  "noData": "Maglumat ýok",
+  "save": "Ýatda saklamak",
+  "notifications": "Bildirişler",
+  "addNotification": "Bildiriş goşmak",
+  "notificationTitle": "Bildiriş adalgasy",
+  "notificationBody": "Bildiriş ýazgysy",
   "@deleteForAll": {
     "description": "Partner name",
     "placeholders": {

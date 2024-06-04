@@ -181,6 +181,20 @@ void main() {
     final result = await noteToIncomeExpense('note.csv');
     await writeIncomeExpenseToCsv(result, filePath2);
   });
+
+  test(
+    'IncomeExpense csv read and categoryList test',
+    () async {
+      final result = await csvToIncomeExpense('note.csv');
+      final categorySet = <CounterCategory>{};
+      for (final item in result) {
+        if (item.category != null) categorySet.add(item.category!);
+      }
+      // final categoryList = categorySet.toList();
+      // print('Ended $categoryList');
+      // return expect(result, incomeExpenseList);
+    },
+  );
 }
 
 Future<void> counterCategoryToCsv(

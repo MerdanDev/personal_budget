@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:wallet/core/notification_service.dart';
 import 'package:wallet/core/shared_preference.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
 import 'package:wallet/counter/cubit/counter_cubit.dart';
@@ -29,6 +31,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
     log(details.exceptionAsString(), stackTrace: details.stack);
   };
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().initNotification();
+  tz.initializeTimeZones();
 
   Bloc.observer = const AppBlocObserver();
   final pref = await SharedPreferences.getInstance();

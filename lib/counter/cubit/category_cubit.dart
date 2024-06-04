@@ -71,4 +71,37 @@ class CounterCategoryCubit extends Cubit<List<CounterCategory>> {
     CounterBloc.instance.add(CategoryDelete(uuid: uuid));
     emit(update);
   }
+
+  List<CounterCategory> restoreBackup(List<CounterCategory> categoryList) {
+    final categories = [...state];
+    final updateList = <CounterCategory>[];
+
+    for (final category in categoryList) {
+      final elements = state.where(
+        (element) => element.uuid == category.uuid,
+      );
+      final compare = elements.firstOrNull?.updatedAt.compareTo(
+        category.updatedAt,
+      );
+      if (compare != null && compare != 0) {
+        final element = elements.first;
+
+        final index = state.indexWhere(
+          (element) => element.uuid == category.uuid,
+        );
+        categories
+          ..removeAt(index)
+          ..insert(
+            index,
+            compare > 0 ? element : category,
+          );
+        updateList.add(compare > 0 ? element : category);
+      } else if (compare == null) {
+        categories.add(category);
+      }
+    }
+    CounterRepository.setCounterCategoryList(categories);
+    emit(categories);
+    return updateList;
+  }
 }

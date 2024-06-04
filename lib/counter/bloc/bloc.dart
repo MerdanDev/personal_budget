@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wallet/core/utils.dart';
+import 'package:wallet/counter/cubit/category_cubit.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/domain/date_filter.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
@@ -205,7 +206,59 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
 
     on<RestoreBackUp>(
       (event, emit) {
-        data.addAll(event.list);
+        for (final item in event.list) {
+          final elements = data.where((e) => e.uuid == item.uuid);
+          final compare = elements.firstOrNull?.updatedAt.compareTo(
+            item.updatedAt,
+          );
+          if (compare != null && compare != 0) {
+            final element = elements.first;
+
+            final index = data.indexWhere(
+              (element) => element.uuid == item.uuid,
+            );
+            data
+              ..removeAt(index)
+              ..insert(
+                index,
+                compare > 0 ? element : item,
+              );
+          } else if (compare == null) {
+            data.add(item);
+          }
+        }
+        // data.addAll(event.list);
+
+        final categoryList = <CounterCategory>{};
+        for (final item in event.list) {
+          if (item.category != null) {
+            categoryList.add(item.category!);
+          }
+        }
+
+        final updateList = CounterCategoryCubit.instance.restoreBackup(
+          categoryList.toList(),
+        );
+
+        final result = data.map(
+          (e) {
+            if (updateList.any(
+              (element) => e.category?.uuid == element.uuid,
+            )) {
+              return e.copyWith(
+                category: updateList.firstWhere(
+                  (element) => e.category?.uuid == element.uuid,
+                ),
+              );
+            } else {
+              return e;
+            }
+          },
+        ).toList();
+
+        data
+          ..clear()
+          ..addAll(result);
         CounterRepository.setIncomeExpenseList(data);
         emit(
           CounterState(

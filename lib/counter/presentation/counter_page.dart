@@ -4,6 +4,7 @@ import 'package:wallet/counter/counter.dart';
 import 'package:wallet/counter/domain/date_filter.dart';
 import 'package:wallet/counter/presentation/widgets/add_income_expense_dialog.dart';
 import 'package:wallet/counter/presentation/widgets/income_expense_widget.dart';
+import 'package:wallet/home/presentation/notification_screen.dart';
 import 'package:wallet/l10n/l10n.dart';
 
 class CounterPage extends StatelessWidget {
@@ -17,6 +18,24 @@ class CounterPage extends StatelessWidget {
         slivers: [
           SliverAppBar.large(
             title: const CounterText(),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  // NotificationService().showNotification(
+                  //   body: 'Test notification',
+                  //   title: 'Test',
+                  // );
+                  // NotificationService().getPendingList();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<NotificationScreen>(
+                      builder: (context) => const NotificationScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.notifications_outlined),
+              ),
+            ],
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(72),
               child: Padding(
@@ -58,6 +77,7 @@ class CounterPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           FloatingActionButton.extended(
+            heroTag: 'income',
             onPressed: () {
               // context.read<CounterCubit>().increment();
               showDialog<void>(
@@ -74,6 +94,7 @@ class CounterPage extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           FloatingActionButton.large(
+            heroTag: 'expense',
             onPressed: () {
               // context.read<CounterCubit>().decrement();
               showDialog<void>(

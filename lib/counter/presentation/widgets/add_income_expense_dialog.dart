@@ -88,6 +88,19 @@ class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
     return Dialog.fullscreen(
       child: Scaffold(
         appBar: AppBar(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: ElevatedButton(
+              onPressed: () {
+                onSubmit('');
+              },
+              child: Text(context.l10n.save),
+            ),
+          ),
+        ),
         resizeToAvoidBottomInset: false,
         body: ListView(
           padding: const EdgeInsets.all(20),

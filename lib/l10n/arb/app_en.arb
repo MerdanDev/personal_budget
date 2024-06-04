@@ -1,5 +1,11 @@
 {
   "@@locale": "en",
+  "noData": "No data available",
+  "save": "Save",
+  "notifications": "Notifications",
+  "addNotification": "Add notification",
+  "notificationTitle": "Notification title",
+  "notificationBody": "Notification body",
   "@deleteForAll": {
     "description": "Partner name",
     "placeholders": {

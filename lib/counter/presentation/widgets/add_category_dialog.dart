@@ -169,7 +169,7 @@ class _AddCounterCategoryDialogState extends State<AddCounterCategoryDialog> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: onSubmit,
-              child: Text(context.l10n.add),
+              child: Text(context.l10n.save),
             ),
           ],
         ),

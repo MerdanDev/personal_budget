@@ -1,5 +1,11 @@
 {
   "@@locale": "ru",
+  "noData": "Данные отсутствуют",
+  "save": "Сохранять",
+  "notifications": "Уведомления",
+  "addNotification": "Добавить уведомление",
+  "notificationTitle": "Заголовок уведомления",
+  "notificationBody": "Описание уведомлений",
   "@deleteForAll": {
     "description": "Partner name",
     "placeholders": {

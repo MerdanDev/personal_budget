@@ -14,6 +14,7 @@ class CalendarPage extends StatefulWidget {
 
 class _CalendarPageState extends State<CalendarPage> {
   final EventController<IncomeExpense> _controller = EventController();
+
   @override
   void initState() {
     final events = CounterBloc.instance.data
@@ -33,6 +34,7 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     final cls = Theme.of(context).colorScheme;
+    final locale = context.l10n.localeName;
 
     return Scaffold(
       body: MonthView<IncomeExpense>(
@@ -43,7 +45,6 @@ class _CalendarPageState extends State<CalendarPage> {
           backgroundColor: cls.primaryContainer,
           iconColor: cls.onPrimaryContainer,
           dateStringBuilder: (date, {secondaryDate}) {
-            final locale = context.l10n.localeName;
             return '${date.year} '
                 '${DateFormat('MMMM', locale).format(date)}';
           },
@@ -59,6 +60,10 @@ class _CalendarPageState extends State<CalendarPage> {
           dayIndex: dayIndex,
           backgroundColor: cls.surface,
           textStyle: TextStyle(color: cls.onSurface),
+          weekDayStringBuilder: (weekDay) {
+            final date = DateTime(2024, 1, weekDay);
+            return DateFormat.E(locale).format(date);
+          },
           // WeekDayTile doesn't have a borderColor parameter
         ),
         cellBuilder: (date, events, isToday, isInMonth) => FilledCell(
@@ -103,6 +108,7 @@ class CalendarDayScreen extends StatefulWidget {
 
 class _CalendarDayScreenState extends State<CalendarDayScreen> {
   final EventController<IncomeExpense> _controller = EventController();
+
   @override
   void initState() {
     final events = CounterBloc.instance.data
@@ -130,13 +136,6 @@ class _CalendarDayScreenState extends State<CalendarDayScreen> {
     final cls = Theme.of(context).colorScheme;
     final locale = context.l10n.localeName;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '${widget.date.year} '
-          '${DateFormat('MMMM', locale).format(widget.date)} '
-          '${widget.date.day}',
-        ),
-      ),
       body: DayView<IncomeExpense>(
         initialDay: widget.date,
         controller: _controller,
@@ -145,7 +144,34 @@ class _CalendarDayScreenState extends State<CalendarDayScreen> {
           date: date,
           backgroundColor: cls.surface,
           iconColor: cls.onSurface,
+          dateStringBuilder: (date, {secondaryDate}) {
+            return '${date.year} '
+                '${DateFormat('MMMM', locale).format(date)} '
+                '${date.day}';
+          },
         ),
+        timeLineBuilder: (date) {
+          return DefaultTimeLineMark(
+            date: date,
+            timeStringBuilder: (date, {secondaryDate}) {
+              return DateFormat('HH:mm', locale).format(date);
+            },
+          );
+        },
+        eventTileBuilder: (date, events, boundary, startDuration, endDuration) {
+          return Card(
+            color: Theme.of(context).colorScheme.primary,
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                events.first.title,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            ),
+          );
+        },
         onEventTap: (events, date) {
           showDialog<void>(
             context: context,

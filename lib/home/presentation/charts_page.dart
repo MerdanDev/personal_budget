@@ -134,7 +134,7 @@ class CandleChartPageState extends State<CandleChartPage> {
                                   date: pageData.date,
                                   amount: pageData.startingAmount,
                                 )
-                              : PieChartWidget(
+                              : RadialChartWidget(
                                   data: pageData.data,
                                 ),
                         ),
@@ -155,21 +155,38 @@ class CandleChartPageState extends State<CandleChartPage> {
   }
 }
 
-class PieChartWidget extends StatefulWidget {
-  const PieChartWidget({required this.data, super.key});
+class RadialChartWidget extends StatefulWidget {
+  const RadialChartWidget({required this.data, super.key});
 
   final List<IncomeExpense> data;
 
   @override
-  State<PieChartWidget> createState() => _PieChartWidgetState();
+  State<RadialChartWidget> createState() => _RadialChartWidgetState();
 }
 
-class _PieChartWidgetState extends State<PieChartWidget> {
+class _RadialChartWidgetState extends State<RadialChartWidget> {
   @override
   Widget build(BuildContext context) {
-    final chartData = <_PieChartData>[];
+    final chartData = <_RadialChartData>[];
     final categories = CounterCategoryCubit.instance.state;
     var income = .0;
+    var categoryLess = .0;
+
+    final categoryLessData = widget.data
+        .where((e) => e.category == null && e.amount < 0)
+        .map((e) => e.amount);
+    if (categoryLessData.isNotEmpty) {
+      categoryLess = categoryLessData.reduce((a, b) => a + b);
+    }
+
+    chartData.add(
+      _RadialChartData(
+        context.l10n.withoutCategory,
+        categoryLess * -1,
+        1,
+        Colors.grey,
+      ),
+    );
 
     for (final category in categories.where(
       (e) => e.type == CategoryType.expense,
@@ -181,7 +198,7 @@ class _PieChartWidgetState extends State<PieChartWidget> {
       if (mapped.isNotEmpty) {
         final amount = mapped.reduce((a, b) => a + b);
         chartData.add(
-          _PieChartData(
+          _RadialChartData(
             category.name,
             amount > 0 ? amount : amount * -1,
             mapped.length,
@@ -190,19 +207,13 @@ class _PieChartWidgetState extends State<PieChartWidget> {
         );
       }
     }
-    for (final category in categories.where(
-      (e) => e.type == CategoryType.income,
-    )) {
-      final mapped = widget.data
-          .where((e) => e.category == category)
-          .map((e) => e.amount)
-          .toList();
-      if (mapped.isNotEmpty) {
-        income += mapped.reduce((a, b) => a + b);
-      }
+    final incomes =
+        widget.data.where((e) => e.amount > 0).map((e) => e.amount).toList();
+    if (incomes.isNotEmpty) {
+      income += incomes.reduce((a, b) => a + b);
     }
     chartData.add(
-      _PieChartData(context.l10n.income, income, 1, Colors.green),
+      _RadialChartData(context.l10n.income, income, 1, Colors.green),
     );
     // final maxCount =
     //     chartData.map((e) => e.count).reduce((a, b) => a > b ? a : b);
@@ -212,8 +223,8 @@ class _PieChartWidgetState extends State<PieChartWidget> {
       tooltipBehavior: TooltipBehavior(
         enable: true,
       ),
-      series: <CircularSeries<_PieChartData, String>>[
-        RadialBarSeries<_PieChartData, String>(
+      series: <CircularSeries<_RadialChartData, String>>[
+        RadialBarSeries<_RadialChartData, String>(
           dataSource: chartData,
           useSeriesColor: true,
           trackOpacity: 0.3,
@@ -370,8 +381,8 @@ class _CandleChartData {
   final double close;
 }
 
-class _PieChartData {
-  _PieChartData(this.x, this.y, this.count, [this.color]);
+class _RadialChartData {
+  _RadialChartData(this.x, this.y, this.count, [this.color]);
   final String x;
   final double y;
   final int count;

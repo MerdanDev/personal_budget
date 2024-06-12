@@ -82,17 +82,17 @@ android {
         production {
             dimension "default"
             applicationIdSuffix ""
-            manifestPlaceholders = [appName: "Wallet"]
+            manifestPlaceholders = [appName: "Gapjyk"]
         }
         staging {
             dimension "default"
             applicationIdSuffix ".stg"
-            manifestPlaceholders = [appName: "[STG] Wallet"]
+            manifestPlaceholders = [appName: "[STG] Gapjyk"]
         }
         development {
             dimension "default"
             applicationIdSuffix ".dev"
-            manifestPlaceholders = [appName: "[DEV] Wallet"]
+            manifestPlaceholders = [appName: "[DEV] Gapjyk"]
         }
     }
 

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
-import 'package:wallet/counter/presentation/counter_page.dart';
 import 'package:wallet/counter/presentation/widgets/add_income_expense_dialog.dart';
 import 'package:wallet/counter/presentation/widgets/category_icon_widget.dart';
+import 'package:wallet/counter/presentation/widgets/delete_dialog.dart';
 
 class IncomeExpenseWidget extends StatelessWidget {
   const IncomeExpenseWidget({required this.element, super.key});

@@ -332,7 +332,7 @@ class _ColorSelectorBottomSheetState extends State<ColorSelectorBottomSheet> {
                 Color.fromARGB(255, red, green, blue).value,
               );
             },
-            child: const Text('Submit'),
+            child: Text(context.l10n.save),
           ),
         ),
       ],

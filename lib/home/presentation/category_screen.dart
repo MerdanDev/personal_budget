@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet/counter/cubit/category_cubit.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
-import 'package:wallet/counter/presentation/counter_page.dart';
 import 'package:wallet/counter/presentation/income_expense_screen.dart';
 import 'package:wallet/counter/presentation/widgets/add_category_dialog.dart';
 import 'package:wallet/counter/presentation/widgets/category_icon_widget.dart';
+import 'package:wallet/counter/presentation/widgets/delete_dialog.dart';
 import 'package:wallet/l10n/l10n.dart';
 
 class CategoryScreen extends StatefulWidget {

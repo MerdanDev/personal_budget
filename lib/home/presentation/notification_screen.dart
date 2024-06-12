@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:wallet/counter/presentation/counter_page.dart';
+import 'package:wallet/counter/presentation/widgets/delete_dialog.dart';
 import 'package:wallet/home/application/notification_cubit.dart';
 import 'package:wallet/home/domain/scheduled_notification.dart';
 import 'package:wallet/home/presentation/notification_add_screen.dart';

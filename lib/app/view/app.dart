@@ -10,6 +10,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Gapjyk',
       darkTheme: ThemeData.dark().copyWith(
         colorScheme: darkColorScheme,
       ),

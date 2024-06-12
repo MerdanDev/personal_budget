@@ -52,103 +52,108 @@ class CandleChartPageState extends State<CandleChartPage> {
             ],
           ),
         ),
-        body: BlocBuilder<CounterBloc, CounterState>(
-          bloc: CounterBloc.instance,
-          builder: (context, state) {
-            if (CounterBloc.instance.data.isEmpty) {
-              return Center(
-                child: Text(context.l10n.noData),
-              );
-            }
-            final data = CounterBloc.instance.data
-              ..sort(
-                (a, b) => a.createdAt.compareTo(b.createdAt),
-              );
-            final date =
-                data.isNotEmpty ? data.first.createdAt : DateTime.now();
-            final now = DateTime.now();
-            final itemCount =
-                (now.year * 12 + now.month) - (date.year * 12 + date.month) + 1;
-            final pageDataList = <ChartPageDate<IncomeExpense>>[];
-
-            for (var i = 0; i < itemCount; i++) {
-              final monthCount = (date.year * 12 + date.month) + i;
-              final pageDate = DateTime(monthCount ~/ 12, monthCount % 12);
-              final pageData = data
-                  .where(
-                    (element) => isSameMonth(
-                      pageDate,
-                      element.createdAt,
-                    ),
-                  )
-                  .toList();
-              final filtered = data
-                  .where((e) => pageDate.compareTo(e.createdAt) == 1)
-                  .map((e) => e.amount);
-              final amount =
-                  filtered.isNotEmpty ? filtered.reduce((a, b) => a + b) : null;
-              pageDataList.insert(
-                0,
-                ChartPageDate(
-                  startingAmount: amount,
-                  data: pageData,
-                  date: pageDate,
-                ),
-              );
-            }
-
-            return SafeArea(
-              child: PageView.builder(
-                reverse: true,
-                itemBuilder: (context, index) {
-                  final pageData = pageDataList[index];
-                  final locale = context.l10n.localeName;
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Text(
-                        '${pageData.date.year} '
-                        '${DateFormat('MMMM', locale).format(pageData.date)}',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      SizedBox(
-                        height: 350,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 16, left: 6),
-                          child: current == 0
-                              ? CandleChartWidget(
-                                  data: pageData.data,
-                                  date: pageData.date,
-                                  amount: pageData.startingAmount,
-                                )
-                              : RadialChartWidget(
-                                  data: pageData.data,
-                                ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                    ],
+        body: SingleChildScrollView(
+          child: SizedBox(
+            height: 450,
+            child: BlocBuilder<CounterBloc, CounterState>(
+              bloc: CounterBloc.instance,
+              builder: (context, state) {
+                if (CounterBloc.instance.data.isEmpty) {
+                  return Center(
+                    child: Text(context.l10n.noData),
                   );
-                },
-                itemCount: pageDataList.length,
-              ),
-            );
-          },
+                }
+                final data = CounterBloc.instance.data
+                  ..sort(
+                    (a, b) => a.createdAt.compareTo(b.createdAt),
+                  );
+                final date =
+                    data.isNotEmpty ? data.first.createdAt : DateTime.now();
+                final now = DateTime.now();
+                final itemCount = (now.year * 12 + now.month) -
+                    (date.year * 12 + date.month) +
+                    1;
+                final pageDataList = <ChartPageDate<IncomeExpense>>[];
+
+                for (var i = 0; i < itemCount; i++) {
+                  final monthCount = (date.year * 12 + date.month) + i;
+                  final pageDate = DateTime(monthCount ~/ 12, monthCount % 12);
+                  final pageData = data
+                      .where(
+                        (element) => isSameMonth(
+                          pageDate,
+                          element.createdAt,
+                        ),
+                      )
+                      .toList();
+                  final filtered = data
+                      .where((e) => pageDate.compareTo(e.createdAt) == 1)
+                      .map((e) => e.amount);
+                  final amount = filtered.isNotEmpty
+                      ? filtered.reduce((a, b) => a + b)
+                      : null;
+                  pageDataList.insert(
+                    0,
+                    ChartPageDate(
+                      startingAmount: amount,
+                      data: pageData,
+                      date: pageDate,
+                    ),
+                  );
+                }
+
+                return PageView.builder(
+                  reverse: true,
+                  itemBuilder: (context, index) {
+                    final pageData = pageDataList[index];
+                    final locale = context.l10n.localeName;
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Text(
+                          '${pageData.date.year} '
+                          '${DateFormat('MMMM', locale).format(pageData.date)}',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        SizedBox(
+                          height: 350,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 16, left: 6),
+                            child: current == 0
+                                ? CandleChartWidget(
+                                    data: pageData.data,
+                                    date: pageData.date,
+                                    amount: pageData.startingAmount,
+                                  )
+                                : RadialChartWidget(
+                                    data: pageData.data,
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    );
+                  },
+                  itemCount: pageDataList.length,
+                );
+              },
+            ),
+          ),
         ),
       ),
     );

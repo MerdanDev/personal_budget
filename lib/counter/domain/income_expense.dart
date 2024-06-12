@@ -32,8 +32,8 @@ class IncomeExpense extends Equatable {
     return IncomeExpense(
       uuid: data[0],
       amount: double.parse(data[1]),
-      title: data[2].isNotEmpty ? data[2] : null,
-      description: data[3].isNotEmpty ? data[3] : null,
+      title: data[2].isNotEmpty ? data[2].replaceAll(';', '') : null,
+      description: data[3].isNotEmpty ? data[3].replaceAll(';', '') : null,
       updatedAt: DateTime.parse(data[4]),
       createdAt: DateTime.parse(data[5]),
       category: data.length == 13
@@ -94,8 +94,8 @@ class IncomeExpense extends Equatable {
     return [
       uuid,
       amount.toString(),
-      title ?? '',
-      description ?? '',
+      title?.replaceAll(',', ';') ?? '',
+      description?.replaceAll(',', ';') ?? '',
       updatedAt.toString(),
       createdAt.toString(),
       if (category != null) ...category!.toListString(),

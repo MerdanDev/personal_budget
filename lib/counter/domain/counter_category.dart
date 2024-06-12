@@ -39,7 +39,7 @@ class CounterCategory extends Equatable {
   factory CounterCategory.fromList(List<String> data) {
     return CounterCategory(
       uuid: data[0],
-      name: data[1],
+      name: data[1].replaceAll(';', ''),
       type: CategoryType.fromString(data[2]),
       iconCode: int.tryParse(data[3]),
       colorCode: int.tryParse(data[4]),
@@ -97,7 +97,7 @@ class CounterCategory extends Equatable {
   List<String> toListString() {
     return [
       uuid,
-      name,
+      name.replaceAll(',', ';'),
       type.name,
       iconCode?.toString() ?? '',
       colorCode?.toString() ?? '',

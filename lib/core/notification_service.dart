@@ -9,12 +9,12 @@ class NotificationService {
     const initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    final initializationSettingsIOS = DarwinInitializationSettings(
-      onDidReceiveLocalNotification:
-          (int id, String? title, String? body, String? payload) async {},
-    );
+    const initializationSettingsIOS = DarwinInitializationSettings(
+        // onDidReceiveLocalNotification:
+        //     (int id, String? title, String? body, String? payload) async {},
+        );
 
-    final initializationSettings = InitializationSettings(
+    const initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );

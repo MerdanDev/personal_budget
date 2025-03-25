@@ -272,7 +272,6 @@ class CandleChartWidget extends StatefulWidget {
 
 class _CandleChartWidgetState extends State<CandleChartWidget> {
   final dataSource = <_CandleChartData>[];
-  late final TooltipBehavior _tooltip;
   late double current;
   @override
   void initState() {
@@ -326,13 +325,19 @@ class _CandleChartWidgetState extends State<CandleChartWidget> {
       }
       dataSource.add(_CandleChartData(day.toString(), high, low, open, close));
     }
-
-    _tooltip = TooltipBehavior(enable: true);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final tooltip = TooltipBehavior(
+      enable: true,
+      format: '${context.l10n.day}: point.x\n'
+          '${context.l10n.open}: point.open\n'
+          '${context.l10n.close}: point.close\n'
+          '${context.l10n.high}: point.high\n'
+          '${context.l10n.low}: point.low',
+    );
     return SfCartesianChart(
       primaryXAxis: const CategoryAxis(),
       primaryYAxis: NumericAxis(
@@ -340,7 +345,7 @@ class _CandleChartWidgetState extends State<CandleChartWidget> {
         maximum: dataSource.map((e) => e.high).reduce((a, b) => a < b ? b : a),
         interval: 10,
       ),
-      tooltipBehavior: _tooltip,
+      tooltipBehavior: tooltip,
       series: <CartesianSeries<_CandleChartData, String>>[
         CandleSeries<_CandleChartData, String>(
           dataSource: dataSource,

@@ -1,5 +1,9 @@
 {
   "@@locale": "ru",
+  "open": "Открытие",
+  "close": "Закрытие",
+  "high": "Максимум",
+  "low": "Минимум",
   "@deleteForAll": {
     "description": "Partner name",
     "placeholders": {

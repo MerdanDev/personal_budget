@@ -66,7 +66,8 @@ class _CalendarPageState extends State<CalendarPage> {
           },
           // WeekDayTile doesn't have a borderColor parameter
         ),
-        cellBuilder: (date, events, isToday, isInMonth) => FilledCell(
+        cellBuilder: (date, events, isToday, isInMonth, hideDaysNotInMonth) =>
+            FilledCell(
           date: date,
           onTileTap: (event, date) {
             showDialog<void>(

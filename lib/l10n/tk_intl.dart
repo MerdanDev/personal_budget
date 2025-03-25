@@ -714,6 +714,13 @@ class TkMaterialLocalizations extends GlobalMaterialLocalizations {
 
   @override
   String get shareButtonLabel => 'Paýlaş';
+
+  @override
+// TODO: implement clearButtonTooltip
+  String get clearButtonTooltip => 'Arassala';
+
+  @override
+  String get selectedDateLabel => 'Sene saýla';
 }
 
 class _TkCupertinoLocalizationsDelegate
@@ -751,6 +758,7 @@ class _TkCupertinoLocalizationsDelegate
         dayFormat: dayFormat,
         singleDigitMinuteFormat: singleDigitMinuteFormat,
         singleDigitSecondFormat: singleDigitSecondFormat,
+        weekdayFormat: intl.DateFormat.E(locale),
       ),
     );
   }
@@ -813,6 +821,7 @@ class CupertinoLocalizationTk extends GlobalCupertinoLocalizations {
     required super.doubleDigitMinuteFormat,
     required super.singleDigitSecondFormat,
     required super.decimalFormat,
+    required super.weekdayFormat,
   });
 
   static const LocalizationsDelegate<CupertinoLocalizations> delegate =

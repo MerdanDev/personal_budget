@@ -1,5 +1,9 @@
 {
   "@@locale": "en",
+  "open": "Open",
+  "close": "Close",
+  "high": "High",
+  "low": "Low",
   "@deleteForAll": {
     "description": "Partner name",
     "placeholders": {

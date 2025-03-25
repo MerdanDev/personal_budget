@@ -1,5 +1,9 @@
 {
   "@@locale": "tk",
+  "open": "Giriş",
+  "close": "Çykyş",
+  "high": "Ýokary",
+  "low": "Aşagy",
   "@deleteForAll": {
     "description": "Partner name",
     "placeholders": {

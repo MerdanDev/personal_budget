@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wallet/counter/cubit/category_cubit.dart';
+import 'package:wallet/counter/domain/category_icons.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
+import 'package:wallet/counter/presentation/widgets/category_icon_widget.dart';
 import 'package:wallet/l10n/l10n.dart';
 
 class AddCounterCategoryDialog extends StatefulWidget {
@@ -61,8 +63,6 @@ class _AddCounterCategoryDialogState extends State<AddCounterCategoryDialog> {
       context: context,
       showDragHandle: true,
       builder: (context) {
-        // start: 0xe089
-        // end: 0xe0e3
         return const IconSelectorBottomSheet();
       },
     );
@@ -134,12 +134,7 @@ class _AddCounterCategoryDialogState extends State<AddCounterCategoryDialog> {
                   child: iconCode != null
                       ? ElevatedButton.icon(
                           onPressed: onPressedForIcon,
-                          icon: Icon(
-                            IconData(
-                              iconCode!,
-                              fontFamily: 'MaterialIcons',
-                            ),
-                          ),
+                          icon: CategoryIcon(iconCode: iconCode!),
                           label: iconButtonText,
                         )
                       : ElevatedButton(
@@ -187,20 +182,17 @@ class IconSelectorBottomSheet extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 50,
       ),
-      children: List.generate(0xf4dd - 0xe000, (index) {
+      children: categoryIcons.map((icon) {
         return IconButton(
           onPressed: () {
-            Navigator.pop(context, 0xe089 + index);
+            Navigator.pop(context, icon.codePoint);
           },
           icon: Icon(
-            IconData(
-              0xe089 + index,
-              fontFamily: 'MaterialIcons',
-            ),
+            icon,
             size: 30,
           ),
         );
-      }),
+      }).toList(),
     );
   }
 }

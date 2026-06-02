@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wallet/counter/domain/category_icons.dart';
 
 class CategoryIcon extends StatelessWidget {
   const CategoryIcon({
@@ -15,10 +16,7 @@ class CategoryIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Icon(
-      IconData(
-        iconCode,
-        fontFamily: 'MaterialIcons',
-      ),
+      iconDataForCode(iconCode),
       size: size,
       color: colorCode != null ? Color(colorCode!) : null,
     );

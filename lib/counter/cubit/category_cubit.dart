@@ -1,14 +1,25 @@
 import 'package:bloc/bloc.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wallet/core/shared_preference.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
 import 'package:wallet/counter/counter.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
+import 'package:wallet/counter/domain/default_categories.dart';
 import 'package:wallet/counter/infrastructure/counter_repository.dart';
 
 class CounterCategoryCubit extends Cubit<List<CounterCategory>> {
   factory CounterCategoryCubit() => instance;
   CounterCategoryCubit._internal() : super([]) {
-    final categories = CounterRepository.getCounterCategoryList();
+    var categories = CounterRepository.getCounterCategoryList();
+    // Seed default categories on first launch so the user has something to
+    // start with. Guarded by a flag so they are not re-created if the user
+    // later deletes all of them.
+    if (categories.isEmpty &&
+        !SingletonSharedPreference.loadDefaultCategoriesSeeded()) {
+      categories = buildDefaultCategories();
+      CounterRepository.setCounterCategoryList(categories);
+      SingletonSharedPreference.setDefaultCategoriesSeeded(value: true);
+    }
     emit(categories);
   }
 

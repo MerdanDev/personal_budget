@@ -54,4 +54,12 @@ class SingletonSharedPreference {
   static Future<bool> setDateFilter(String data) {
     return instance._pref.setString(KeyData.dateFilterState, data);
   }
+
+  static bool loadDefaultCategoriesSeeded() {
+    return instance._pref.getBool(KeyData.defaultCategoriesSeeded) ?? false;
+  }
+
+  static Future<bool> setDefaultCategoriesSeeded({required bool value}) {
+    return instance._pref.setBool(KeyData.defaultCategoriesSeeded, value);
+  }
 }

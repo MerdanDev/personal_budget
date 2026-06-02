@@ -716,7 +716,6 @@ class TkMaterialLocalizations extends GlobalMaterialLocalizations {
   String get shareButtonLabel => 'Paýlaş';
 
   @override
-// TODO: implement clearButtonTooltip
   String get clearButtonTooltip => 'Arassala';
 
   @override
@@ -979,4 +978,28 @@ class CupertinoLocalizationTk extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Paýlaş';
+
+  @override
+  String get cancelButtonLabel => 'Goý bol';
+
+  @override
+  String get backButtonLabel => 'Yza';
+
+  @override
+  String get collapsedHint => 'Ýapyk';
+
+  @override
+  String get expandedHint => 'Açyk';
+
+  @override
+  String get expansionTileCollapsedHint => 'açmak üçin iki gezek basyň';
+
+  @override
+  String get expansionTileExpandedHint => 'ýapmak üçin iki gezek basyň';
+
+  @override
+  String get expansionTileCollapsedTapHint => 'Giňişleýin maglumat üçin açyň';
+
+  @override
+  String get expansionTileExpandedTapHint => 'Ýapmak';
 }

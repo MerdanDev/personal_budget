@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:wallet/l10n/arb/app_localizations.dart';
 import 'package:wallet/l10n/tk_intl.dart';
 
 /// An abstract singleton class that holds [delegates] and

@@ -62,7 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
               await sink.close();
               await file.create();
 
-              final outputFile = await FilePicker.platform.saveFile(
+              final outputFile = await FilePicker.saveFile(
                 dialogTitle: dialogTitle,
                 fileName: name,
                 type: FileType.custom,
@@ -82,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.settings_backup_restore),
             title: Text(context.l10n.restore_backUp),
             onTap: () async {
-              final result = await FilePicker.platform.pickFiles();
+              final result = await FilePicker.pickFiles();
 
               if (result != null) {
                 final file = File(result.files.single.path!);

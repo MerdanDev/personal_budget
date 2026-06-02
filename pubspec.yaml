@@ -7,29 +7,31 @@ environment:
   sdk: "^3.3.0"
 
 dependencies:
-  bloc: ^8.1.3
-  calendar_view: ^1.1.0
-  equatable: ^2.0.5
-  file_picker: ^8.0.3
+  bloc: ^9.0.0
+  calendar_view: ^1.4.0
+  equatable: ^2.0.7
+  file_picker: ^11.0.0
+  firebase_core: ^3.10.0
+  firebase_messaging: ^15.2.0
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.4
-  flutter_local_notifications: ^18.0.1
+  flutter_bloc: ^9.0.0
+  flutter_local_notifications: ^21.0.0
   flutter_localizations:
     sdk: flutter
-  intl: ^0.19.0
+  intl: ^0.20.2
   path_provider: ^2.1.3
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.5.0
   syncfusion_flutter_charts: ^28.1.35
-  timezone: ^0.10.0
-  uuid: ^4.3.3
+  timezone: ^0.11.0
+  uuid: ^4.5.0
 
 dev_dependencies:
-  bloc_test: ^9.1.6
+  bloc_test: ^10.0.0
   flutter_test:
     sdk: flutter
-  mocktail: ^1.0.3
-  very_good_analysis: ^7.0.0
+  mocktail: ^1.0.4
+  very_good_analysis: ^10.0.0
 
 flutter:
   uses-material-design: true

@@ -48,7 +48,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               return Dismissible(
                 key: Key(notification.id.toString()),
                 background: ColoredBox(
-                  color: Colors.red.withOpacity(0.4),
+                  color: Colors.red.withValues(alpha: 0.4),
                 ),
                 confirmDismiss: (direction) async {
                   final result = await showDialog<bool>(

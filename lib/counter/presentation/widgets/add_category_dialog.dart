@@ -229,9 +229,9 @@ class _ColorSelectorBottomSheetState extends State<ColorSelectorBottomSheet> {
   void initState() {
     if (widget.colorCode != null) {
       final color = Color(widget.colorCode!);
-      red = color.red;
-      green = color.green;
-      blue = color.blue;
+      red = (color.r * 255).round();
+      green = (color.g * 255).round();
+      blue = (color.b * 255).round();
     }
     super.initState();
   }
@@ -329,7 +329,7 @@ class _ColorSelectorBottomSheetState extends State<ColorSelectorBottomSheet> {
             onPressed: () {
               Navigator.pop(
                 context,
-                Color.fromARGB(255, red, green, blue).value,
+                Color.fromARGB(255, red, green, blue).toARGB32(),
               );
             },
             child: Text(context.l10n.save),

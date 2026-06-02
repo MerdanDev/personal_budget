@@ -42,8 +42,11 @@ class _CalendarPageState extends State<CalendarPage> {
         borderColor: cls.outlineVariant,
         headerBuilder: (date) => MonthPageHeader(
           date: date,
-          backgroundColor: cls.primaryContainer,
-          iconColor: cls.onPrimaryContainer,
+          headerStyle: HeaderStyle(
+            decoration: BoxDecoration(color: cls.primaryContainer),
+            leftIconConfig: IconDataConfig(color: cls.onPrimaryContainer),
+            rightIconConfig: IconDataConfig(color: cls.onPrimaryContainer),
+          ),
           dateStringBuilder: (date, {secondaryDate}) {
             return '${date.year} '
                 '${DateFormat('MMMM', locale).format(date)}';
@@ -91,7 +94,8 @@ class _CalendarPageState extends State<CalendarPage> {
           events: events,
           shouldHighlight: isToday,
           titleColor: isInMonth ? cls.onSurface : cls.onSurfaceVariant,
-          backgroundColor: isInMonth ? cls.surface : cls.surfaceVariant,
+          backgroundColor:
+              isInMonth ? cls.surface : cls.surfaceContainerHighest,
         ),
       ),
     );
@@ -143,8 +147,11 @@ class _CalendarDayScreenState extends State<CalendarDayScreen> {
         backgroundColor: cls.surface,
         dayTitleBuilder: (date) => DayPageHeader(
           date: date,
-          backgroundColor: cls.surface,
-          iconColor: cls.onSurface,
+          headerStyle: HeaderStyle(
+            decoration: BoxDecoration(color: cls.surface),
+            leftIconConfig: IconDataConfig(color: cls.onSurface),
+            rightIconConfig: IconDataConfig(color: cls.onSurface),
+          ),
           dateStringBuilder: (date, {secondaryDate}) {
             return '${date.year} '
                 '${DateFormat('MMMM', locale).format(date)} '

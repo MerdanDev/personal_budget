@@ -169,4 +169,3 @@ class _CounterDataViewState extends State<CounterDataView> {
     );
   }
 }
-

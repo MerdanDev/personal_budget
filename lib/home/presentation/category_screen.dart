@@ -66,7 +66,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               return Dismissible(
                 key: Key(category.uuid),
                 background: ColoredBox(
-                  color: Colors.red.withOpacity(0.4),
+                  color: Colors.red.withValues(alpha: 0.4),
                 ),
                 confirmDismiss: (direction) async {
                   final result = await showDialog<bool>(

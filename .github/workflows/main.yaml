@@ -20,6 +20,9 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
     with:
       flutter_channel: stable
+      # App is mid-migration with limited test coverage (~11%). Raise this as
+      # coverage grows; the workflow defaults to 100% which the app cannot meet.
+      min_coverage: 10
 
   spell-check:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v1

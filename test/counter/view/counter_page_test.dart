@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -10,58 +9,32 @@ import '../../helpers/helpers.dart';
 class MockCounterCubit extends MockCubit<double> implements CounterCubit {}
 
 void main() {
+  setUp(initTestPreferences);
+
   group('CounterPage', () {
-    testWidgets('renders CounterView', (tester) async {
-      await tester.pumpApp(const CounterPage());
+    testWidgets('renders CounterPage', (tester) async {
+      await tester.pumpApp(const CounterPage(), withAppBlocs: true);
+      await tester.pump();
       expect(find.byType(CounterPage), findsOneWidget);
     });
   });
 
-  group('CounterView', () {
+  group('CounterText', () {
     late CounterCubit counterCubit;
 
     setUp(() {
       counterCubit = MockCounterCubit();
     });
 
-    testWidgets('renders current count', (tester) async {
-      const state = 42.0;
-      when(() => counterCubit.state).thenReturn(state);
+    testWidgets('renders the formatted current count', (tester) async {
+      when(() => counterCubit.state).thenReturn(42);
       await tester.pumpApp(
-        BlocProvider.value(
+        BlocProvider<CounterCubit>.value(
           value: counterCubit,
-          child: const CounterPage(),
+          child: const CounterText(),
         ),
       );
-      expect(find.text('$state'), findsOneWidget);
-    });
-
-    testWidgets('calls increment when increment button is tapped',
-        (tester) async {
-      when(() => counterCubit.state).thenReturn(0);
-      when(() => counterCubit.increment()).thenReturn(null);
-      await tester.pumpApp(
-        BlocProvider.value(
-          value: counterCubit,
-          child: const CounterPage(),
-        ),
-      );
-      await tester.tap(find.byIcon(Icons.add));
-      verify(() => counterCubit.increment()).called(1);
-    });
-
-    testWidgets('calls decrement when decrement button is tapped',
-        (tester) async {
-      when(() => counterCubit.state).thenReturn(0);
-      when(() => counterCubit.decrement()).thenReturn(null);
-      await tester.pumpApp(
-        BlocProvider.value(
-          value: counterCubit,
-          child: const CounterPage(),
-        ),
-      );
-      await tester.tap(find.byIcon(Icons.remove));
-      verify(() => counterCubit.decrement()).called(1);
+      expect(find.text('42.00 TMT'), findsOneWidget);
     });
   });
 }

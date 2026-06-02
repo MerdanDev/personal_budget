@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "794238169340",
+    "project_id": "wallet-gapjyk",
+    "storage_bucket": "wallet-gapjyk.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794238169340:android:1c022d2ee89d7821526779",
+        "android_client_info": {
+          "package_name": "dev.merdan.wallet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu13k_kvUwHj2fkvyx9aynsUIJFABtQlA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

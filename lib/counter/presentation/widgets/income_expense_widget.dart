@@ -16,7 +16,7 @@ class IncomeExpenseWidget extends StatelessWidget {
     return Dismissible(
       key: Key(element.uuid),
       background: ColoredBox(
-        color: Colors.red.withOpacity(0.4),
+        color: Colors.red.withValues(alpha: 0.4),
       ),
       confirmDismiss: (direction) async {
         final result = await showDialog<bool>(

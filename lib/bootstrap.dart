@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:wallet/core/notification_service.dart';
+import 'package:wallet/core/push_notification_service.dart';
 import 'package:wallet/core/shared_preference.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
 import 'package:wallet/counter/cubit/counter_cubit.dart';
+import 'package:wallet/firebase_options.dart';
 
 class AppBlocObserver extends BlocObserver {
   const AppBlocObserver();
@@ -31,7 +34,17 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
     log(details.exceptionAsString(), stackTrace: details.stack);
   };
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService().initNotification();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  final notificationService = NotificationService();
+  await notificationService.initNotification();
+  // Wire FCM up after the local plugin so its Android channels already exist
+  // and foreground pushes can be rendered through the same plugin.
+  await PushNotificationService(notificationService).init();
+
   tz.initializeTimeZones();
 
   Bloc.observer = const AppBlocObserver();

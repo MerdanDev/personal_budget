@@ -3,8 +3,14 @@ import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:wallet/core/notification_service.dart';
 import 'package:wallet/firebase_options.dart';
+
+/// Global navigator key so notification taps (which originate outside the
+/// widget tree) can present UI. Wired into [MaterialApp.navigatorKey] in
+/// `lib/app/view/app.dart`.
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// Background / terminated message handler.
 ///
@@ -88,7 +94,37 @@ class PushNotificationService {
 
   void _handleMessageOpened(RemoteMessage message) {
     log('Notification opened app: ${message.messageId} data=${message.data}');
-    // TODO(merdan): route to a screen based on message.data when needed.
+
+    final title =
+        message.notification?.title ?? message.data['title'] as String?;
+    final body = message.notification?.body ??
+        message.data['body'] as String? ??
+        (message.data.isEmpty ? null : message.data.toString());
+
+    if (title == null && body == null) return;
+
+    // Taps from the terminated state run during bootstrap (before the first
+    // frame), so defer until the navigator exists.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = navigatorKey.currentContext;
+      if (context == null) return;
+      showDialog<void>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: title == null ? null : Text(title),
+            content:
+                body == null ? null : SingleChildScrollView(child: Text(body)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(MaterialLocalizations.of(context).okButtonLabel),
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   /// Subscribe to a topic to receive broadcast pushes (e.g. announcements).

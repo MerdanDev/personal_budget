@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet/core/color_schemes.g.dart';
+import 'package:wallet/core/push_notification_service.dart';
 import 'package:wallet/home/home.dart';
 import 'package:wallet/l10n/l10n.dart';
 import 'package:wallet/l10n/localization_override.dart';
@@ -10,6 +11,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Gapjyk',
       darkTheme: ThemeData.dark().copyWith(
         colorScheme: darkColorScheme,

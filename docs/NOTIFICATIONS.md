@@ -83,8 +83,8 @@ await PushNotificationService(notificationService).init();  // wires FCM
 | **Foreground** | yes | Android: local plugin (manual). iOS/macOS: OS via presentation options | `FirebaseMessaging.onMessage` → `showRemoteNotification` (Android only) |
 | **Background** | yes | OS system tray (automatic) | `firebaseMessagingBackgroundHandler` (no display) |
 | **Terminated** | yes | OS system tray (automatic) | `firebaseMessagingBackgroundHandler` (no display) |
-| **Tap (from background)** | — | — | `onMessageOpenedApp` → `_handleMessageOpened` |
-| **Tap (from terminated)** | — | — | `getInitialMessage()` → `_handleMessageOpened` |
+| **Tap (from background)** | — | Dialog with the message text | `onMessageOpenedApp` → `_handleMessageOpened` |
+| **Tap (from terminated)** | — | Dialog with the message text | `getInitialMessage()` → `_handleMessageOpened` |
 
 > `data`-only messages (no `notification` block) are **never** auto-displayed by
 > the OS; handle/display them yourself if you start sending them.
@@ -176,10 +176,25 @@ await pushService.unsubscribeFromTopic('announcements');
 
 ---
 
-## 9. Follow-ups (TODO)
+## 9. Reading an opened notification
 
-- Route notification taps to a specific screen — see the TODO in
-  `_handleMessageOpened` (`push_notification_service.dart`). It currently only
-  logs `message.data`.
+When a notification is tapped, `_handleMessageOpened` presents an
+`AlertDialog` containing the message **title** and **body** (scrollable, with a
+localized OK button) so the user can read it comfortably. The text is taken from
+`message.notification` first, falling back to `message.data['title']` /
+`message.data['body']`.
+
+Because taps from the *terminated* state are handled during `bootstrap()` —
+before the first frame exists — the dialog is shown via
+`WidgetsBinding.addPostFrameCallback` using a global `navigatorKey`
+(declared in `push_notification_service.dart`, wired into
+`MaterialApp.navigatorKey` in `lib/app/view/app.dart`).
+
+---
+
+## 10. Follow-ups (TODO)
+
+- Replace the generic dialog with deep-link routing to a specific screen based
+  on `message.data` when the payload schema is defined.
 - Persist/transmit the FCM token instead of only logging it.
 - Optionally expose a settings toggle for topic subscription.

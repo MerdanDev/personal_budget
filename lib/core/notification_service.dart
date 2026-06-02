@@ -117,9 +117,9 @@ class NotificationService {
     final notification = message.notification;
     if (notification == null) return;
 
-    final id = (message.messageId?.hashCode ??
-            DateTime.now().millisecondsSinceEpoch) &
-        0x7fffffff;
+    final id =
+        (message.messageId?.hashCode ?? DateTime.now().millisecondsSinceEpoch) &
+            0x7fffffff;
 
     return notificationsPlugin.show(
       id: id,

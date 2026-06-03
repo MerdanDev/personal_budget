@@ -42,6 +42,8 @@
   },
   "aLongTimeAgo": "Давно",
   "add": "Добавить",
+  "addExpense": "Добавить расход",
+  "addIncome": "Добавить доход",
   "addFriendsFromContact": "Давайте добавим друзей из ваших контактов",
   "addNotification": "Добавить уведомление",
   "ago": "назад",

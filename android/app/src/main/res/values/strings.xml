@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_add_expense">Add expense</string>
+    <string name="widget_add_income">Add income</string>
+    <string name="wallet_widget_description">Balance with quick add buttons</string>
+</resources>

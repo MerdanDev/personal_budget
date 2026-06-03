@@ -27,6 +27,12 @@ class AppLocalizationsTk extends AppLocalizations {
   String get add => 'Goşmak';
 
   @override
+  String get addExpense => 'Çykdajy goşmak';
+
+  @override
+  String get addIncome => 'Girdeji goşmak';
+
+  @override
   String get addFriendsFromContact => 'Kontaktlaryňyzdan dostlaryňyzy goşalyň.';
 
   @override

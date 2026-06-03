@@ -42,6 +42,8 @@
   },
   "aLongTimeAgo": "A long time ago",
   "add": "Add",
+  "addExpense": "Add expense",
+  "addIncome": "Add income",
   "addFriendsFromContact": "Let's add friends from your contacts",
   "addNotification": "Add notification",
   "ago": "ago",

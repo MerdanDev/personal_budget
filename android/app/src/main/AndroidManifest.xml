@@ -53,5 +53,19 @@
            </intent-filter>
        </receiver>
        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
+
+       <!-- Home-screen widget showing balance/income/expense with quick-add
+            buttons. Exported so the launcher can place and update it. -->
+       <receiver
+           android:name=".WalletWidgetProvider"
+           android:label="@string/wallet_widget_description"
+           android:exported="true">
+           <intent-filter>
+               <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+           </intent-filter>
+           <meta-data
+               android:name="android.appwidget.provider"
+               android:resource="@xml/wallet_widget_info" />
+       </receiver>
     </application>
 </manifest>

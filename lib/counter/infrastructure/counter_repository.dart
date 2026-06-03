@@ -1,15 +1,21 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:wallet/core/shared_preference.dart';
+import 'package:wallet/core/widget_service.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/domain/date_filter.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
 
 class CounterRepository {
   static Future<bool> setIncomeExpenseList(List<IncomeExpense> data) async {
-    return SingletonSharedPreference.setIncomeExpenseList(
+    final result = await SingletonSharedPreference.setIncomeExpenseList(
       jsonEncode(data.map((e) => e.toMap()).toList()),
     );
+    // Keep the home-screen widget in step with every add/edit/delete. Fire and
+    // forget — widget refresh must never delay or fail the data write.
+    unawaited(WidgetService.sync());
+    return result;
   }
 
   static List<IncomeExpense> getIncomeExpenseList() {

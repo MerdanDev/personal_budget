@@ -45,7 +45,7 @@
 					<key>UISceneConfigurationName</key>
 					<string>flutter</string>
 					<key>UISceneDelegateClassName</key>
-					<string>FlutterSceneDelegate</string>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
 					<key>UISceneStoryboardFile</key>
 					<string>Main</string>
 				</dict>
@@ -73,5 +73,20 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- Owns the wallet:// scheme that the home-screen widget buttons deep-link
+	     into; routed by WidgetService on the Flutter side. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>dev.merdan.wallet.widget</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wallet</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

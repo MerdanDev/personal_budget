@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet/core/shared_preference.dart';
+import 'package:wallet/core/widget_service.dart';
 
 class LocalizationCubit extends Cubit<Locale> {
   factory LocalizationCubit() => instance;
@@ -22,6 +24,9 @@ class LocalizationCubit extends Cubit<Locale> {
     if (selectedLanguage != state.languageCode) {
       await SingletonSharedPreference.setLangCode(selectedLanguage);
       emit(Locale(selectedLanguage));
+      // Refresh the home-screen widget so its button labels follow the newly
+      // selected language.
+      unawaited(WidgetService.sync());
     }
   }
 }

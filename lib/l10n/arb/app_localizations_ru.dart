@@ -27,6 +27,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get add => 'Добавить';
 
   @override
+  String get addExpense => 'Добавить расход';
+
+  @override
+  String get addIncome => 'Добавить доход';
+
+  @override
   String get addFriendsFromContact =>
       'Давайте добавим друзей из ваших контактов';
 

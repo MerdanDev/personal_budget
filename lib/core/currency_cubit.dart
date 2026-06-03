@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:wallet/core/shared_preference.dart';
+import 'package:wallet/core/widget_service.dart';
 
 /// Holds the currency symbol shown next to every monetary amount. It is a
 /// free-text value chosen during onboarding (and editable in settings), so it
@@ -18,6 +21,8 @@ class CurrencyCubit extends Cubit<String> {
     if (trimmed == state) return;
     await SingletonSharedPreference.setCurrencySymbol(trimmed);
     emit(trimmed);
+    // Re-render the widget so its amounts pick up the new symbol.
+    unawaited(WidgetService.sync());
   }
 }
 

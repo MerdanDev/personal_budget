@@ -10,6 +10,7 @@ import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/core/notification_service.dart';
 import 'package:wallet/core/push_notification_service.dart';
 import 'package:wallet/core/shared_preference.dart';
+import 'package:wallet/core/widget_service.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
 import 'package:wallet/counter/cubit/counter_cubit.dart';
 import 'package:wallet/firebase_options.dart';
@@ -51,6 +52,11 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   Bloc.observer = const AppBlocObserver();
   final pref = await SharedPreferences.getInstance();
   SingletonSharedPreference.init(pref);
+
+  // Bridge balance/income/expense to the home-screen widget and start
+  // listening for its button taps. Reads persisted data directly, so it only
+  // needs SharedPreferences to be ready.
+  await WidgetService.init();
 
   // Add cross-flavor configuration here
 

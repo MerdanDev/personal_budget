@@ -27,6 +27,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get add => 'Add';
 
   @override
+  String get addExpense => 'Add expense';
+
+  @override
+  String get addIncome => 'Add income';
+
+  @override
   String get addFriendsFromContact => 'Let\'s add friends from your contacts';
 
   @override

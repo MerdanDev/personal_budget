@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -42,6 +43,14 @@ class PushNotificationService {
   /// Initializes FCM. Assumes [Firebase.initializeApp] has already run and the
   /// local notification plugin (and its Android channels) is already set up.
   Future<void> init() async {
+    // FCM relies on an APNs token which iOS simulators cannot provide, so
+    // getToken()/requestPermission() error or hang there. Skip init entirely on
+    // the simulator — pushes can only be tested on a physical device anyway.
+    if (await _isIosSimulator()) {
+      log('Skipping FCM init: running on iOS simulator (no APNs).');
+      return;
+    }
+
     // 1. Permission. Going through FirebaseMessaging requests the single
     // UNUserNotificationCenter authorization on iOS/macOS and POST_NOTIFICATIONS
     // on Android 13+, so we don't prompt twice from the local plugin.
@@ -90,6 +99,14 @@ class PushNotificationService {
     _messaging.onTokenRefresh.listen((newToken) {
       log('FCM token refreshed: $newToken');
     });
+  }
+
+  /// True only when running on an iOS simulator. macOS, Android, web and
+  /// physical iOS devices all return false.
+  Future<bool> _isIosSimulator() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) return false;
+    final info = await DeviceInfoPlugin().iosInfo;
+    return !info.isPhysicalDevice;
   }
 
   void _handleMessageOpened(RemoteMessage message) {

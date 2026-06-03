@@ -19,11 +19,36 @@ class CounterCategoryCubit extends Cubit<List<CounterCategory>> {
       categories = buildDefaultCategories();
       CounterRepository.setCounterCategoryList(categories);
       SingletonSharedPreference.setDefaultCategoriesSeeded(value: true);
+    } else {
+      // Migration: ensure the fallback "Other" categories exist for users who
+      // seeded their categories before they were introduced.
+      categories = _ensureDefaultCategories(categories);
     }
     emit(categories);
   }
 
   static CounterCategoryCubit instance = CounterCategoryCubit._internal();
+
+  /// Adds the per-type fallback categories if they are missing, persisting the
+  /// updated list. Returns the (possibly unchanged) list.
+  static List<CounterCategory> _ensureDefaultCategories(
+    List<CounterCategory> categories,
+  ) {
+    final missing = <CounterCategory>[];
+    for (final type in CategoryType.values) {
+      final fallback = defaultCategoryFor(type, categories);
+      final present = categories.any((c) => c.uuid == fallback.uuid);
+      if (!present) {
+        missing.add(fallback);
+      }
+    }
+    if (missing.isEmpty) {
+      return categories;
+    }
+    final updated = [...missing, ...categories];
+    CounterRepository.setCounterCategoryList(updated);
+    return updated;
+  }
 
   void addCategory({
     required String name,

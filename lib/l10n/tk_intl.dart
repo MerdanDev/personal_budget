@@ -757,7 +757,7 @@ class _TkCupertinoLocalizationsDelegate
         dayFormat: dayFormat,
         singleDigitMinuteFormat: singleDigitMinuteFormat,
         singleDigitSecondFormat: singleDigitSecondFormat,
-        weekdayFormat: intl.DateFormat.E(locale),
+        weekdayFormat: intl.DateFormat.E(localeName),
       ),
     );
   }
@@ -980,25 +980,25 @@ class CupertinoLocalizationTk extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Paýlaş';
 
   @override
-  String get cancelButtonLabel => 'Goý bol';
-
-  @override
   String get backButtonLabel => 'Yza';
 
   @override
-  String get collapsedHint => 'Ýapyk';
+  String get cancelButtonLabel => 'Goýbolsun';
 
   @override
-  String get expandedHint => 'Açyk';
+  String get collapsedHint => 'Açmak';
 
   @override
-  String get expansionTileCollapsedHint => 'açmak üçin iki gezek basyň';
+  String get expandedHint => 'Ýapmak';
 
   @override
-  String get expansionTileExpandedHint => 'ýapmak üçin iki gezek basyň';
+  String get expansionTileCollapsedHint => 'Açmak üçin iki gezek bas';
 
   @override
-  String get expansionTileCollapsedTapHint => 'Giňişleýin maglumat üçin açyň';
+  String get expansionTileCollapsedTapHint => 'Dowamyny görmek üçin aç';
+
+  @override
+  String get expansionTileExpandedHint => 'Ýapmak üçin iki gezek bas';
 
   @override
   String get expansionTileExpandedTapHint => 'Ýapmak';

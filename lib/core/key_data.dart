@@ -8,4 +8,6 @@ class KeyData {
   static const String notificationList = 'notificationList';
   static const String dateFilterState = 'dateFilterState';
   static const String defaultCategoriesSeeded = 'defaultCategoriesSeeded';
+  static const String currencySymbol = 'currencySymbol';
+  static const String onboardingCompleted = 'onboardingCompleted';
 }

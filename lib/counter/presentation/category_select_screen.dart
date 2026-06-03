@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
 
@@ -25,6 +26,7 @@ class _CategorySelectScreenState extends State<CategorySelectScreen> {
           final data = CounterBloc.instance.data
               .where((e) => e.category == null)
               .toList();
+          final symbol = context.watch<CurrencyCubit>().state;
           return ListView.builder(
             itemBuilder: (context, index) {
               final element = data[index];
@@ -47,8 +49,8 @@ class _CategorySelectScreenState extends State<CategorySelectScreen> {
                 ),
                 selected: selected,
                 title: Text(
-                  '${element.amount.toStringAsFixed(2)}'
-                  ' : ${element.title ?? ''}',
+                  '${formatAmount(element.amount, symbol)}'
+                  ' : ${element.category?.name ?? ''}',
                 ),
                 subtitle: element.description != null
                     ? Text(element.description!)

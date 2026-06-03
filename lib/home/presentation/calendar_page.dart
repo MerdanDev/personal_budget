@@ -20,7 +20,7 @@ class _CalendarPageState extends State<CalendarPage> {
     final events = CounterBloc.instance.data
         .map(
           (e) => CalendarEventData(
-            title: '${e.amount} - ${e.title}',
+            title: '${e.amount} - ${e.category?.name ?? ''}',
             description: e.description,
             event: e,
             date: e.createdAt,
@@ -119,7 +119,7 @@ class _CalendarDayScreenState extends State<CalendarDayScreen> {
     final events = CounterBloc.instance.data
         .map(
           (e) => CalendarEventData(
-            title: '${e.amount} - ${e.title}',
+            title: '${e.amount} - ${e.category?.name ?? ''}',
             description: e.description,
             event: e,
             date: e.createdAt,

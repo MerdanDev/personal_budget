@@ -62,4 +62,20 @@ class SingletonSharedPreference {
   static Future<bool> setDefaultCategoriesSeeded({required bool value}) {
     return instance._pref.setBool(KeyData.defaultCategoriesSeeded, value);
   }
+
+  static String? loadCurrencySymbol() {
+    return instance._pref.getString(KeyData.currencySymbol);
+  }
+
+  static Future<bool> setCurrencySymbol(String symbol) {
+    return instance._pref.setString(KeyData.currencySymbol, symbol);
+  }
+
+  static bool loadOnboardingCompleted() {
+    return instance._pref.getBool(KeyData.onboardingCompleted) ?? false;
+  }
+
+  static Future<bool> setOnboardingCompleted({required bool value}) {
+    return instance._pref.setBool(KeyData.onboardingCompleted, value);
+  }
 }

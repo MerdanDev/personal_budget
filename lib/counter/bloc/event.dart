@@ -12,12 +12,10 @@ class IncomeExpenseEvent extends CounterEvent {
     required this.amount,
     this.category,
     this.description,
-    this.title,
   }) : uuid = const Uuid().v1();
 
   final String uuid;
   final double amount;
-  final String? title;
   final String? description;
   final CounterCategory? category;
   @override
@@ -30,12 +28,10 @@ class UpdateIncomeExpenseEvent extends CounterEvent {
     this.amount,
     this.category,
     this.description,
-    this.title,
   });
 
   final String uuid;
   final double? amount;
-  final String? title;
   final String? description;
   final CounterCategory? category;
   @override

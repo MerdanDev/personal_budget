@@ -63,6 +63,21 @@ class NotificationService {
     await androidPlugin?.createNotificationChannel(remoteChannel);
   }
 
+  /// Asks the OS for permission to post notifications. Safe to call from the
+  /// onboarding reminders step; returns whether permission was granted (or
+  /// `true` on platforms that do not gate notifications behind a prompt).
+  Future<bool> requestPermissions() async {
+    final androidGranted = await notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+    final iosGranted = await notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(alert: true, badge: true, sound: true);
+    return androidGranted ?? iosGranted ?? true;
+  }
+
   NotificationDetails notificationDetails() {
     return NotificationDetails(
       android: AndroidNotificationDetails(

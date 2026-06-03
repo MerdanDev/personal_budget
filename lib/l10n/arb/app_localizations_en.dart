@@ -160,6 +160,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String get counter => 'Counter';
 
   @override
+  String get currency => 'Currency';
+
+  @override
+  String get currencySymbol => 'Currency symbol';
+
+  @override
+  String get currencyHint => 'e.g. \$, €, TMT, m';
+
+  @override
+  String get getStarted => 'Get started';
+
+  @override
+  String get enableReminders => 'Enable reminders';
+
+  @override
+  String get maybeLater => 'Maybe later';
+
+  @override
+  String get onbWelcomeTitle => 'Welcome to Gapjyk';
+
+  @override
+  String get onbWelcomeBody =>
+      'Track your income and expenses with ease. Start by choosing your language.';
+
+  @override
+  String get onbCurrencyTitle => 'Choose your currency';
+
+  @override
+  String get onbCurrencyBody =>
+      'Enter the symbol shown next to every amount. You can change it anytime in Settings.';
+
+  @override
+  String get onbAddTitle => 'Add income & expenses';
+
+  @override
+  String get onbAddBody =>
+      'Tap the + button to record income and the − button for an expense, then enter an amount and pick a category.';
+
+  @override
+  String get onbCategoriesTitle => 'Organize with categories';
+
+  @override
+  String get onbCategoriesBody =>
+      'We\'ve added a starter set of categories. Create, edit, or remove them anytime from Settings.';
+
+  @override
+  String get onbRemindersTitle => 'Stay on track';
+
+  @override
+  String get onbRemindersBody =>
+      'Turn on reminders so you never forget to record your spending. You can manage them later.';
+
+  @override
   String get day => 'day';
 
   @override
@@ -235,6 +288,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get income => 'Income';
+
+  @override
+  String get expense => 'Expense';
+
+  @override
+  String get balance => 'Balance';
 
   @override
   String get inputAgreeTerms => 'I agree to all the terms and conditions';

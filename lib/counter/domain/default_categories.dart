@@ -13,6 +13,12 @@ class _DefaultCategory {
   final Color color;
 }
 
+/// Stable uuids for the fallback categories assigned when an entry has no
+/// category selected. Kept fixed so migration and the empty-state lookup can
+/// reference them reliably.
+const String kDefaultExpenseCategoryUuid = 'default-expense';
+const String kDefaultIncomeCategoryUuid = 'default-income';
+
 const List<_DefaultCategory> _defaults = <_DefaultCategory>[
   // Expenses
   _DefaultCategory(
@@ -102,22 +108,58 @@ const List<_DefaultCategory> _defaults = <_DefaultCategory>[
   ),
 ];
 
+/// The fallback "Other" categories, one per type, assigned to entries that
+/// have no category selected. They carry [kDefaultExpenseCategoryUuid] /
+/// [kDefaultIncomeCategoryUuid] so they can be looked up by a stable identity.
+CounterCategory _buildDefaultCategory(CategoryType type, DateTime now) {
+  return CounterCategory(
+    uuid: type == CategoryType.expense
+        ? kDefaultExpenseCategoryUuid
+        : kDefaultIncomeCategoryUuid,
+    name: 'Other',
+    type: type,
+    iconCode: Icons.more_horiz.codePoint,
+    colorCode: Colors.grey.toARGB32(),
+    createdAt: now,
+    updatedAt: now,
+  );
+}
+
+/// Returns the fallback category for [type], reusing the one already present in
+/// [categories] when available so embedded copies stay in sync with edits.
+CounterCategory defaultCategoryFor(
+  CategoryType type,
+  List<CounterCategory> categories,
+) {
+  final uuid = type == CategoryType.expense
+      ? kDefaultExpenseCategoryUuid
+      : kDefaultIncomeCategoryUuid;
+  for (final category in categories) {
+    if (category.uuid == uuid) {
+      return category;
+    }
+  }
+  return _buildDefaultCategory(type, DateTime.now());
+}
+
 /// Builds the list of categories pre-populated on first launch so the user
 /// does not have to set everything up by hand.
 List<CounterCategory> buildDefaultCategories() {
   const uuid = Uuid();
   final now = DateTime.now();
-  return _defaults
-      .map(
-        (d) => CounterCategory(
-          uuid: uuid.v1(),
-          name: d.name,
-          type: d.type,
-          iconCode: d.icon.codePoint,
-          colorCode: d.color.toARGB32(),
-          createdAt: now,
-          updatedAt: now,
-        ),
-      )
-      .toList();
+  return [
+    _buildDefaultCategory(CategoryType.expense, now),
+    _buildDefaultCategory(CategoryType.income, now),
+    ..._defaults.map(
+      (d) => CounterCategory(
+        uuid: uuid.v1(),
+        name: d.name,
+        type: d.type,
+        iconCode: d.icon.codePoint,
+        colorCode: d.color.toARGB32(),
+        createdAt: now,
+        updatedAt: now,
+      ),
+    ),
+  ];
 }

@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/counter/counter.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
 import 'package:wallet/home/presentation/category_screen.dart';
@@ -17,6 +19,42 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  Future<void> _editCurrency(BuildContext context, String current) async {
+    final controller = TextEditingController(text: current);
+    final symbol = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(context.l10n.currency),
+          content: TextField(
+            controller: controller,
+            textAlign: TextAlign.center,
+            textCapitalization: TextCapitalization.characters,
+            autofocus: true,
+            decoration: InputDecoration(
+              labelText: context.l10n.currencySymbol,
+              hintText: context.l10n.currencyHint,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(context.l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, controller.text),
+              child: Text(context.l10n.save),
+            ),
+          ],
+        );
+      },
+    );
+    if (symbol != null) {
+      await CurrencyCubit.instance.changeSymbol(symbol);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +73,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     return const CategoryScreen();
                   },
                 ),
+              );
+            },
+          ),
+          BlocBuilder<CurrencyCubit, String>(
+            bloc: CurrencyCubit.instance,
+            builder: (context, symbol) {
+              return ListTile(
+                leading: const Icon(Icons.payments_outlined),
+                title: Text(context.l10n.currency),
+                subtitle: symbol.isNotEmpty ? Text(symbol) : null,
+                onTap: () => _editCurrency(context, symbol),
               );
             },
           ),

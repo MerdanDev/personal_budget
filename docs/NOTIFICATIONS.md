@@ -137,7 +137,15 @@ Permission is requested **once** via `FirebaseMessaging.requestPermission()`
 `POST_NOTIFICATIONS`). The Darwin init in the local plugin now passes
 `requestAlertPermission/Badge/Sound: false` so it doesn't prompt again.
 
-### 6.6 iOS `UNUserNotificationCenter` delegate
+### 6.6 iOS simulator (no APNs)
+iOS simulators cannot register for remote notifications, so an APNs token is
+never issued and `requestPermission()` / `getToken()` error or hang. `init()`
+therefore short-circuits on the simulator (detected via `device_info_plus`'
+`isPhysicalDevice`) and logs a skip message. macOS, Android, web and physical
+iOS devices are unaffected. Local/scheduled notifications still work on the
+simulator since they don't go through FCM.
+
+### 6.7 iOS `UNUserNotificationCenter` delegate
 Both plugins want the notification-center delegate on iOS. `firebase_messaging`
 uses method swizzling and coexists with `flutter_local_notifications` in these
 versions; no manual delegate juggling is required in `AppDelegate.swift`.

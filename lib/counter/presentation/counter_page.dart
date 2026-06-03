@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/counter/counter.dart';
 import 'package:wallet/counter/domain/date_filter.dart';
 import 'package:wallet/counter/presentation/widgets/add_income_expense_dialog.dart';
+import 'package:wallet/counter/presentation/widgets/income_expense_summary.dart';
 import 'package:wallet/counter/presentation/widgets/income_expense_widget.dart';
 import 'package:wallet/home/presentation/notification_screen.dart';
 import 'package:wallet/l10n/l10n.dart';
@@ -37,29 +39,36 @@ class CounterPage extends StatelessWidget {
               ),
             ],
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(72),
+              preferredSize: const Size.fromHeight(140),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: BlocBuilder<CounterBloc, CounterState>(
-                  builder: (context, state) {
-                    return SegmentedButton<DateFilter>(
-                      segments: DateFilter.values
-                          .map(
-                            (e) => ButtonSegment<DateFilter>(
-                              value: e,
-                              icon: Icon(e.iconData),
-                              // label: Text(e.name),
-                            ),
-                          )
-                          .toList(),
-                      selected: {state.dateFilter},
-                      onSelectionChanged: (value) {
-                        context.read<CounterBloc>().add(
-                              ChangeDateFilter(value.first),
-                            );
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const IncomeExpenseSummary(),
+                    const SizedBox(height: 12),
+                    BlocBuilder<CounterBloc, CounterState>(
+                      builder: (context, state) {
+                        return SegmentedButton<DateFilter>(
+                          segments: DateFilter.values
+                              .map(
+                                (e) => ButtonSegment<DateFilter>(
+                                  value: e,
+                                  icon: Icon(e.iconData),
+                                  // label: Text(e.name),
+                                ),
+                              )
+                              .toList(),
+                          selected: {state.dateFilter},
+                          onSelectionChanged: (value) {
+                            context.read<CounterBloc>().add(
+                                  ChangeDateFilter(value.first),
+                                );
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -121,9 +130,10 @@ class CounterText extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final count = context.select((CounterCubit cubit) => cubit.state);
+    final symbol = context.watch<CurrencyCubit>().state;
     return FittedBox(
       child: Text(
-        '${count.toStringAsFixed(2)} TMT',
+        formatAmount(count, symbol),
         style: theme.textTheme.displayLarge,
       ),
     );

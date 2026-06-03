@@ -26,7 +26,6 @@ class IncomeExpenseDialog extends StatefulWidget {
 class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
   final TextEditingController mainController = TextEditingController();
   final TextEditingController secondaryController = TextEditingController();
-  final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   CounterCategory? category;
   final categoryTextController = TextEditingController();
@@ -34,7 +33,6 @@ class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
   void onSubmit(String value) {
     final main = mainController.text;
     final secondary = secondaryController.text;
-    final title = titleController.text;
     final description = descriptionController.text;
     if (main.isNotEmpty || secondary.isNotEmpty) {
       final amount = (main.isNotEmpty ? int.parse(main) : 0) +
@@ -44,7 +42,6 @@ class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
               UpdateIncomeExpenseEvent(
                 uuid: widget.value!.uuid,
                 amount: widget.isMinus ? amount * -1 : amount,
-                title: title.isNotEmpty ? title : null,
                 description: description.isNotEmpty ? description : null,
                 category: category,
               ),
@@ -53,7 +50,6 @@ class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
         context.read<CounterBloc>().add(
               IncomeExpenseEvent(
                 amount: widget.isMinus ? amount * -1 : amount,
-                title: title.isNotEmpty ? title : null,
                 description: description.isNotEmpty ? description : null,
                 category: category,
               ),
@@ -72,9 +68,6 @@ class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
       secondaryController.text = parts.last;
       category = widget.value?.category;
       categoryTextController.text = category?.name ?? '';
-    }
-    if (widget.value?.title != null) {
-      titleController.text = widget.value!.title!;
     }
     if (widget.value?.description != null) {
       descriptionController.text = widget.value!.description!;
@@ -184,31 +177,6 @@ class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
               ],
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: titleController,
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.send,
-              style: const TextStyle(
-                fontSize: 20,
-              ),
-              decoration: InputDecoration(
-                hintText: context.l10n.title,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 3,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    width: 3,
-                  ),
-                ),
-              ),
-              onSubmitted: onSubmit,
-            ),
-            const SizedBox(height: 20),
             BlocBuilder<CounterCategoryCubit, List<CounterCategory>>(
               bloc: CounterCategoryCubit.instance,
               builder: (context, state) {
@@ -253,17 +221,6 @@ class _IncomeExpenseDialogState extends State<IncomeExpenseDialog> {
                           },
                           icon: const Icon(Icons.add),
                         ),
-                  trailingIcon: category != null
-                      ? IconButton(
-                          onPressed: () {
-                            setState(() {
-                              category = null;
-                              categoryTextController.text = '';
-                            });
-                          },
-                          icon: const Icon(Icons.remove),
-                        )
-                      : null,
                   dropdownMenuEntries: state
                       .where((element) {
                         return widget.isMinus

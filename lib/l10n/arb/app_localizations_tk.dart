@@ -160,6 +160,59 @@ class AppLocalizationsTk extends AppLocalizations {
   String get counter => 'Hasaplaýjy';
 
   @override
+  String get currency => 'Pul birligi';
+
+  @override
+  String get currencySymbol => 'Pul birliginiň belgisi';
+
+  @override
+  String get currencyHint => 'mysal üçin \$, €, TMT, m';
+
+  @override
+  String get getStarted => 'Başla';
+
+  @override
+  String get enableReminders => 'Ýatlatmalary işjeňleşdir';
+
+  @override
+  String get maybeLater => 'Soňra';
+
+  @override
+  String get onbWelcomeTitle => 'Gapjyga hoş geldiňiz';
+
+  @override
+  String get onbWelcomeBody =>
+      'Girdejileriňizi we çykdajylaryňyzy aňsatlyk bilen yzarlaň. Ilki bilen diliňizi saýlaň.';
+
+  @override
+  String get onbCurrencyTitle => 'Pul birligiňizi saýlaň';
+
+  @override
+  String get onbCurrencyBody =>
+      'Her bir mukdaryň ýanynda görkeziljek belgini giriziň. Ony islän wagtyňyz sazlamalarda üýtgedip bilersiňiz.';
+
+  @override
+  String get onbAddTitle => 'Girdeji we çykdajy goşuň';
+
+  @override
+  String get onbAddBody =>
+      'Girdeji ýazmak üçin + düwmesine, çykdajy üçin − düwmesine basyň, soňra mukdary giriziň we kategoriýa saýlaň.';
+
+  @override
+  String get onbCategoriesTitle => 'Kategoriýalar bilen tertipläň';
+
+  @override
+  String get onbCategoriesBody =>
+      'Başlangyç kategoriýalary goşduk. Olary islän wagtyňyz sazlamalarda döredip, üýtgedip ýa-da pozup bilersiňiz.';
+
+  @override
+  String get onbRemindersTitle => 'Ýatdan çykarmaň';
+
+  @override
+  String get onbRemindersBody =>
+      'Çykdajylaryňyzy ýazmagy ýatdan çykarmazlyk üçin ýatlatmalary açyň. Olary soňra dolandyryp bilersiňiz.';
+
+  @override
   String get day => 'gün';
 
   @override
@@ -234,6 +287,12 @@ class AppLocalizationsTk extends AppLocalizations {
 
   @override
   String get income => 'Girdeji';
+
+  @override
+  String get expense => 'Çykdajy';
+
+  @override
+  String get balance => 'Balans';
 
   @override
   String get inputAgreeTerms => 'Men düzgünleriň ählisini kabul edýärin';

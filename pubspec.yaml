@@ -9,6 +9,7 @@ environment:
 dependencies:
   bloc: ^9.0.0
   calendar_view: ^1.4.0
+  device_info_plus: ^11.3.0
   equatable: ^2.0.7
   file_picker: ^11.0.0
   firebase_core: ^3.10.0

@@ -394,6 +394,102 @@ abstract class AppLocalizations {
   /// **'Counter'**
   String get counter;
 
+  /// No description provided for @currency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
+
+  /// No description provided for @currencySymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency symbol'**
+  String get currencySymbol;
+
+  /// No description provided for @currencyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. \$, €, TMT, m'**
+  String get currencyHint;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get getStarted;
+
+  /// No description provided for @enableReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable reminders'**
+  String get enableReminders;
+
+  /// No description provided for @maybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get maybeLater;
+
+  /// No description provided for @onbWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Gapjyk'**
+  String get onbWelcomeTitle;
+
+  /// No description provided for @onbWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your income and expenses with ease. Start by choosing your language.'**
+  String get onbWelcomeBody;
+
+  /// No description provided for @onbCurrencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your currency'**
+  String get onbCurrencyTitle;
+
+  /// No description provided for @onbCurrencyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the symbol shown next to every amount. You can change it anytime in Settings.'**
+  String get onbCurrencyBody;
+
+  /// No description provided for @onbAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add income & expenses'**
+  String get onbAddTitle;
+
+  /// No description provided for @onbAddBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the + button to record income and the − button for an expense, then enter an amount and pick a category.'**
+  String get onbAddBody;
+
+  /// No description provided for @onbCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize with categories'**
+  String get onbCategoriesTitle;
+
+  /// No description provided for @onbCategoriesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve added a starter set of categories. Create, edit, or remove them anytime from Settings.'**
+  String get onbCategoriesBody;
+
+  /// No description provided for @onbRemindersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on track'**
+  String get onbRemindersTitle;
+
+  /// No description provided for @onbRemindersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on reminders so you never forget to record your spending. You can manage them later.'**
+  String get onbRemindersBody;
+
   /// No description provided for @day.
   ///
   /// In en, this message translates to:
@@ -537,6 +633,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Income'**
   String get income;
+
+  /// No description provided for @expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get expense;
+
+  /// No description provided for @balance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get balance;
 
   /// No description provided for @inputAgreeTerms.
   ///

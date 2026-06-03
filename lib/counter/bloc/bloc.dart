@@ -5,6 +5,7 @@ import 'package:wallet/core/utils.dart';
 import 'package:wallet/counter/cubit/category_cubit.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/domain/date_filter.dart';
+import 'package:wallet/counter/domain/default_categories.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
 import 'package:wallet/counter/infrastructure/counter_repository.dart';
 
@@ -25,7 +26,27 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
       (event, emit) {
         // get data from cache;
         final dataFromCache = CounterRepository.getIncomeExpenseList();
-        data.addAll(dataFromCache);
+        // Migration: entries without a category get the type-appropriate
+        // fallback so the list always has a label. (Legacy `title` text is
+        // already folded into the description by IncomeExpense.fromMap.)
+        final categories = CounterCategoryCubit.instance.state;
+        var migrated = false;
+        final normalized = dataFromCache.map((e) {
+          if (e.category != null) {
+            return e;
+          }
+          migrated = true;
+          return e.copyWith(
+            category: defaultCategoryFor(
+              e.amount < 0 ? CategoryType.expense : CategoryType.income,
+              categories,
+            ),
+          );
+        }).toList();
+        data.addAll(normalized);
+        if (migrated) {
+          CounterRepository.setIncomeExpenseList(data);
+        }
         // get date filter from cache;
         dateFilter = CounterRepository.getDateFilter();
         // complete loading;
@@ -44,8 +65,11 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         IncomeExpense(
           uuid: event.uuid,
           amount: event.amount,
-          title: event.title,
-          category: event.category,
+          category: event.category ??
+              defaultCategoryFor(
+                event.amount < 0 ? CategoryType.expense : CategoryType.income,
+                CounterCategoryCubit.instance.state,
+              ),
           description: event.description,
           createdAt: now,
           updatedAt: now,
@@ -76,7 +100,6 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
             element.copyWith(
               amount: event.amount,
               category: event.category,
-              title: event.title,
               description: event.description,
               updatedAt: now,
             ),
@@ -178,13 +201,13 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
       final result = data.map(
         (e) {
           if (e.category?.uuid == event.uuid) {
-            return IncomeExpense(
-              uuid: e.uuid,
-              amount: e.amount,
-              title: e.title,
-              description: e.description,
-              createdAt: e.createdAt,
-              updatedAt: e.updatedAt,
+            // Reassign the fallback category so the entry keeps a label
+            // instead of dropping back to an uncategorised state.
+            return e.copyWith(
+              category: defaultCategoryFor(
+                e.amount < 0 ? CategoryType.expense : CategoryType.income,
+                CounterCategoryCubit.instance.state,
+              ),
             );
           } else {
             return e;

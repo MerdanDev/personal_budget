@@ -63,14 +63,14 @@ final incomeExpenseList = [
   IncomeExpense(
     uuid: 'a547e340-5e6a-1fd1-a7e5-bd5bc590d70d',
     amount: -500,
-    title: 'Sargyt',
+    description: 'Sargyt',
     createdAt: DateTime.parse('2024-05-16 14:06:52.958501'),
     updatedAt: DateTime.parse('2024-05-16 14:06:52.958501'),
   ),
   IncomeExpense(
     uuid: '3c121f10-8d2e-1fb8-82ff-05c742b486c7',
     amount: 500,
-    title: 'Algy',
+    description: 'Algy',
     category: CounterCategory(
       uuid: '713a2c10-01ff-1fc2-9bbf-bf5e3294f43a',
       name: 'Transaction',
@@ -86,7 +86,7 @@ final incomeExpenseList = [
   IncomeExpense(
     uuid: '272028e0-8cac-1fb8-82ff-05c742b486c7',
     amount: -25,
-    title: 'Nahar',
+    description: 'Nahar',
     category: CounterCategory(
       uuid: 'a0ed5970-7050-1f88-a514-01494298e55b',
       name: 'Nahar',
@@ -102,7 +102,7 @@ final incomeExpenseList = [
   IncomeExpense(
     uuid: '77045570-8c5c-1fb8-82ff-05c742b486c7',
     amount: -50,
-    title: 'Taksi',
+    description: 'Taksi',
     category: CounterCategory(
       uuid: '4247ddc0-6fd1-1f88-a514-01494298e55b',
       name: 'Transport',
@@ -118,7 +118,7 @@ final incomeExpenseList = [
   IncomeExpense(
     uuid: 'bab0a750-4981-1f91-974c-53c976491ab5',
     amount: -20,
-    title: 'Günortan nahar',
+    description: 'Günortan nahar',
     category: CounterCategory(
       uuid: 'a0ed5970-7050-1f88-a514-01494298e55b',
       name: 'Nahar',
@@ -134,7 +134,7 @@ final incomeExpenseList = [
   IncomeExpense(
     uuid: 'c0ab1170-5bd8-1f8e-badc-2d1de34b5641',
     amount: 2500,
-    title: 'Awans',
+    description: 'Awans',
     category: CounterCategory(
       uuid: '39ff6eb0-02ed-1fc2-9bbf-bf5e3294f43a',
       name: 'Aýlyk',
@@ -275,7 +275,7 @@ Future<List<IncomeExpense>> noteToIncomeExpense(String filePath) async {
       IncomeExpense(
         uuid: raw[0],
         amount: amount,
-        title: raw[2],
+        description: raw[2],
         createdAt: createdAt,
         updatedAt: createdAt,
         category: amount > 5000

@@ -161,6 +161,59 @@ class AppLocalizationsRu extends AppLocalizations {
   String get counter => 'Счетчик';
 
   @override
+  String get currency => 'Валюта';
+
+  @override
+  String get currencySymbol => 'Символ валюты';
+
+  @override
+  String get currencyHint => 'напр. \$, €, TMT, m';
+
+  @override
+  String get getStarted => 'Начать';
+
+  @override
+  String get enableReminders => 'Включить напоминания';
+
+  @override
+  String get maybeLater => 'Позже';
+
+  @override
+  String get onbWelcomeTitle => 'Добро пожаловать в Gapjyk';
+
+  @override
+  String get onbWelcomeBody =>
+      'Легко отслеживайте доходы и расходы. Для начала выберите язык.';
+
+  @override
+  String get onbCurrencyTitle => 'Выберите валюту';
+
+  @override
+  String get onbCurrencyBody =>
+      'Введите символ, который будет показан рядом с каждой суммой. Его можно изменить в настройках.';
+
+  @override
+  String get onbAddTitle => 'Добавляйте доходы и расходы';
+
+  @override
+  String get onbAddBody =>
+      'Нажмите +, чтобы записать доход, и −, чтобы добавить расход, затем введите сумму и выберите категорию.';
+
+  @override
+  String get onbCategoriesTitle => 'Упорядочьте по категориям';
+
+  @override
+  String get onbCategoriesBody =>
+      'Мы добавили начальный набор категорий. Создавайте, изменяйте или удаляйте их в настройках.';
+
+  @override
+  String get onbRemindersTitle => 'Не забывайте о записях';
+
+  @override
+  String get onbRemindersBody =>
+      'Включите напоминания, чтобы не забывать записывать расходы. Управлять ими можно позже.';
+
+  @override
   String get day => 'день';
 
   @override
@@ -237,6 +290,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get income => 'Доход';
+
+  @override
+  String get expense => 'Расход';
+
+  @override
+  String get balance => 'Баланс';
 
   @override
   String get inputAgreeTerms =>

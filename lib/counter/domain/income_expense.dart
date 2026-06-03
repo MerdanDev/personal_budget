@@ -8,46 +8,71 @@ class IncomeExpense extends Equatable {
     required this.amount,
     required this.createdAt,
     required this.updatedAt,
-    this.title,
     this.description,
     this.category,
   });
   factory IncomeExpense.fromMap(Map<String, dynamic> map) {
+    final category = map['category'] != null
+        ? CounterCategory.fromMap(map['category'] as Map<String, dynamic>)
+        : null;
     return IncomeExpense(
       uuid: map['uuid'] as String,
       amount: map['amount'] as double,
-      title: map['title'] as String?,
-      description: map['description'] as String?,
-      category: map['category'] != null
-          ? CounterCategory.fromMap(
-              map['category'] as Map<String, dynamic>,
-            )
-          : null,
+      // `title` was removed; fold any legacy value into the description so no
+      // user-entered text is lost when older data is read.
+      description: _foldTitle(
+        map['title'] as String?,
+        map['description'] as String?,
+        category?.name,
+      ),
+      category: category,
       createdAt: DateTime.parse(map['createdAt'] as String),
       updatedAt: DateTime.parse(map['updatedAt'] as String),
     );
   }
 
   factory IncomeExpense.fromList(List<String> data) {
+    final category = data.length == 13
+        ? CounterCategory.fromList(data.sublist(6))
+        : null;
     return IncomeExpense(
       uuid: data[0],
       amount: double.parse(data[1]),
-      title: data[2].isNotEmpty ? data[2].replaceAll(';', '') : null,
-      description: data[3].isNotEmpty ? data[3].replaceAll(';', '') : null,
+      // index 2 is the legacy `title` column, kept for positional
+      // compatibility; fold it into the description on import.
+      description: _foldTitle(
+        data[2].isNotEmpty ? data[2].replaceAll(';', '') : null,
+        data[3].isNotEmpty ? data[3].replaceAll(';', '') : null,
+        category?.name,
+      ),
       updatedAt: DateTime.parse(data[4]),
       createdAt: DateTime.parse(data[5]),
-      category: data.length == 13
-          ? CounterCategory.fromList(
-              data.sublist(6),
-            )
-          : null,
+      category: category,
     );
+  }
+
+  /// Merges a legacy [title] into [description]. Drops the title when it is
+  /// empty or merely echoes the category name; otherwise prepends it so its
+  /// content survives. Idempotent: re-reading already-migrated data is a no-op
+  /// because the title source is always null by then.
+  static String? _foldTitle(
+    String? title,
+    String? description,
+    String? categoryName,
+  ) {
+    final t = title?.trim();
+    if (t == null || t.isEmpty || t == categoryName) {
+      return description;
+    }
+    if (description == null || description.isEmpty) {
+      return t;
+    }
+    return '$t\n$description';
   }
   //</editor-fold>
 
   final String uuid;
   final double amount;
-  final String? title;
   final String? description;
   final CounterCategory? category;
   final DateTime createdAt;
@@ -62,7 +87,6 @@ class IncomeExpense extends Equatable {
     return 'IncomeExpense( '
         "uuid: '$uuid', "
         'amount: $amount, '
-        "title: '$title', "
         "description: '$description', "
         'category: $category, '
         "createdAt: DateTime.parse('$createdAt'), "
@@ -73,7 +97,6 @@ class IncomeExpense extends Equatable {
   IncomeExpense copyWith({
     String? uuid,
     double? amount,
-    String? title,
     String? description,
     CounterCategory? category,
     DateTime? createdAt,
@@ -82,7 +105,6 @@ class IncomeExpense extends Equatable {
     return IncomeExpense(
       uuid: uuid ?? this.uuid,
       amount: amount ?? this.amount,
-      title: title ?? this.title,
       description: description ?? this.description,
       category: category ?? this.category,
       createdAt: createdAt ?? this.createdAt,
@@ -94,7 +116,8 @@ class IncomeExpense extends Equatable {
     return [
       uuid,
       amount.toString(),
-      title?.replaceAll(',', ';') ?? '',
+      // legacy `title` column kept empty for positional CSV compatibility
+      '',
       description?.replaceAll(',', ';') ?? '',
       updatedAt.toString(),
       createdAt.toString(),
@@ -106,7 +129,6 @@ class IncomeExpense extends Equatable {
     return {
       'uuid': uuid,
       'amount': amount,
-      'title': title,
       'description': description,
       'category': category?.toMap(),
       'createdAt': createdAt.toIso8601String(),

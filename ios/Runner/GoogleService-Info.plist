@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>dev.merdan.wallet</string>
+	<string>dev.merdan.wallet.WalletWidget</string>
 	<key>PROJECT_ID</key>
 	<string>wallet-gapjyk</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:794238169340:ios:409fbf7d40b41a39526779</string>
+	<string>1:794238169340:ios:6d8ff65a24f1877a526779</string>
 </dict>
 </plist>

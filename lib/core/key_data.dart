@@ -10,4 +10,11 @@ class KeyData {
   static const String defaultCategoriesSeeded = 'defaultCategoriesSeeded';
   static const String currencySymbol = 'currencySymbol';
   static const String onboardingCompleted = 'onboardingCompleted';
+
+  /// One-time snapshot of the raw income/expense JSON taken before the
+  /// title→category migration first rewrites the store, as a recovery net.
+  static const String incomeExpenseBackup = 'incomeExpenseBackup';
+
+  /// Set once the title→category migration has run and persisted a clean store.
+  static const String titleCategoryMigrationDone = 'titleCategoryMigrationDone';
 }

@@ -1006,6 +1006,24 @@ abstract class AppLocalizations {
   /// **'Radial chart'**
   String get radialChart;
 
+  /// No description provided for @rateApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the app'**
+  String get rateApp;
+
+  /// No description provided for @rateAppSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoying the app? Let us know with a review'**
+  String get rateAppSubtitle;
+
+  /// No description provided for @rateAppFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the store. Please try again later.'**
+  String get rateAppFailed;
+
   /// No description provided for @reacted.
   ///
   /// In en, this message translates to:
@@ -1066,6 +1084,30 @@ abstract class AppLocalizations {
   /// **'Restore back up'**
   String get restore_backUp;
 
+  /// No description provided for @restorePreUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore data from before update'**
+  String get restorePreUpdate;
+
+  /// No description provided for @restorePreUpdateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover entries as they were before the last app update'**
+  String get restorePreUpdateSubtitle;
+
+  /// No description provided for @restorePreUpdateConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This replaces your current entries with the snapshot saved before the last app update. Continue?'**
+  String get restorePreUpdateConfirm;
+
+  /// No description provided for @restoreSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Data restored'**
+  String get restoreSuccess;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
@@ -1077,6 +1119,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Successfully saved:'**
   String get save_success;
+
+  /// No description provided for @scanBetaBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Beta'**
+  String get scanBetaBadge;
+
+  /// No description provided for @scanBetaNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt scanning is in beta. Results can vary, so please double-check the amount and description before saving.'**
+  String get scanBetaNotice;
+
+  /// No description provided for @scanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read the receipt. Try a clearer photo.'**
+  String get scanFailed;
+
+  /// No description provided for @scanInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'About receipt scanning'**
+  String get scanInfo;
+
+  /// No description provided for @scanTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'Use bright, even lighting and avoid glare or shadows.'**
+  String get scanTip1;
+
+  /// No description provided for @scanTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'Lay the receipt flat on a contrasting surface.'**
+  String get scanTip2;
+
+  /// No description provided for @scanTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill the frame with the receipt and keep it straight.'**
+  String get scanTip3;
+
+  /// No description provided for @scanTip4.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold steady so the text stays sharp and in focus.'**
+  String get scanTip4;
+
+  /// No description provided for @scanTipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips for a good scan'**
+  String get scanTipsTitle;
+
+  /// No description provided for @scanFromCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get scanFromCamera;
+
+  /// No description provided for @scanFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get scanFromGallery;
+
+  /// No description provided for @scanReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan receipt'**
+  String get scanReceipt;
+
+  /// No description provided for @scanningReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading receipt…'**
+  String get scanningReceipt;
 
   /// No description provided for @search.
   ///

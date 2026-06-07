@@ -479,6 +479,15 @@ class AppLocalizationsTk extends AppLocalizations {
   String get radialChart => 'Radial diagramma';
 
   @override
+  String get rateApp => 'Programma baha ber';
+
+  @override
+  String get rateAppSubtitle => 'Programma haýyşmy? Synyňyzy galdyryň';
+
+  @override
+  String get rateAppFailed => 'Dükany açyp bolmady. Soňrak gaýtadan synanyşyň.';
+
+  @override
   String get reacted => 'Habardan täsirlendi';
 
   @override
@@ -511,10 +520,65 @@ class AppLocalizationsTk extends AppLocalizations {
   String get restore_backUp => 'Ätiýaçlyk nusgasyny dikelt';
 
   @override
+  String get restorePreUpdate => 'Täzelenmeden öňki maglumatlary dikelt';
+
+  @override
+  String get restorePreUpdateSubtitle =>
+      'Ýazgylary soňky täzelenmeden öňki ýagdaýyna gaýtaryň';
+
+  @override
+  String get restorePreUpdateConfirm =>
+      'Häzirki ýazgylar soňky täzelenmeden öň ýatda saklanan nusga bilen çalşyrylar. Dowam etmelimi?';
+
+  @override
+  String get restoreSuccess => 'Maglumatlar dikeldildi';
+
+  @override
   String get save => 'Ýatda saklamak';
 
   @override
   String get save_success => 'Üstünlik bilen ýatda saklandy:';
+
+  @override
+  String get scanBetaBadge => 'Beta';
+
+  @override
+  String get scanBetaNotice =>
+      'Çek skanlama beta tertibinde işleýär. Netije üýtgäp biler, şonuň üçin ýatda saklamazdan öň möçberi we düşündirişi barlaň.';
+
+  @override
+  String get scanFailed => 'Çeki okap bolmady. Has aýdyň surat synanyşyň.';
+
+  @override
+  String get scanInfo => 'Çek skanlamak barada';
+
+  @override
+  String get scanTip1 =>
+      'Ýagty we deň yşyklandyrmany ulanyň, şöhle we kölegeden gaça duruň.';
+
+  @override
+  String get scanTip2 => 'Çeki tekiz, tapawutly ýüzde goýuň.';
+
+  @override
+  String get scanTip3 => 'Çek bilen kadry dolduryň we ony göni saklaň.';
+
+  @override
+  String get scanTip4 => 'Tekst aýdyň bolar ýaly telefony hereketsiz saklaň.';
+
+  @override
+  String get scanTipsTitle => 'Gowy surat üçin maslahatlar';
+
+  @override
+  String get scanFromCamera => 'Surat almak';
+
+  @override
+  String get scanFromGallery => 'Galereýadan saýlamak';
+
+  @override
+  String get scanReceipt => 'Çeki skanlamak';
+
+  @override
+  String get scanningReceipt => 'Çek okalýar…';
 
   @override
   String get search => 'Gözleg';

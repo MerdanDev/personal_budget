@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wallet/core/shared_preference.dart';
 import 'package:wallet/core/utils.dart';
 import 'package:wallet/counter/cubit/category_cubit.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
@@ -24,28 +25,34 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         ) {
     on<InitEvent>(
       (event, emit) {
+        final migrationDone =
+            SingletonSharedPreference.loadTitleCategoryMigrationDone();
+
+        // Before the title→category migration first rewrites the store, keep a
+        // one-time snapshot of the original raw JSON as a recovery net for
+        // upgrading users (who never see onboarding again).
+        if (!migrationDone) {
+          final raw = SingletonSharedPreference.loadIncomeExpenseList();
+          if (raw != null && raw.isNotEmpty) {
+            SingletonSharedPreference.setIncomeExpenseBackup(raw);
+          }
+        }
+
         // get data from cache;
         final dataFromCache = CounterRepository.getIncomeExpenseList();
         // Migration: entries without a category get the type-appropriate
         // fallback so the list always has a label. (Legacy `title` text is
         // already folded into the description by IncomeExpense.fromMap.)
-        final categories = CounterCategoryCubit.instance.state;
-        var migrated = false;
-        final normalized = dataFromCache.map((e) {
-          if (e.category != null) {
-            return e;
-          }
-          migrated = true;
-          return e.copyWith(
-            category: defaultCategoryFor(
-              e.amount < 0 ? CategoryType.expense : CategoryType.income,
-              categories,
-            ),
-          );
-        }).toList();
-        data.addAll(normalized);
-        if (migrated) {
+        final migrated = dataFromCache.any((e) => e.category == null);
+        data.addAll(_withDefaultCategories(dataFromCache));
+        // Persist a clean store on the first migrated launch (drops legacy
+        // `title` keys, folds them into descriptions, fills default
+        // categories), and on any later launch that still had to fill a gap.
+        if (!migrationDone || migrated) {
           CounterRepository.setIncomeExpenseList(data);
+        }
+        if (!migrationDone) {
+          SingletonSharedPreference.setTitleCategoryMigrationDone(value: true);
         }
         // get date filter from cache;
         dateFilter = CounterRepository.getDateFilter();
@@ -293,6 +300,27 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
       },
     );
 
+    on<RestorePreUpdateBackup>((event, emit) {
+      final backup = CounterRepository.getIncomeExpenseBackup();
+      if (backup == null) {
+        return;
+      }
+      data
+        ..clear()
+        ..addAll(_withDefaultCategories(backup));
+      CounterRepository.setIncomeExpenseList(data);
+      // The snapshot has served its purpose; drop it so it can't later
+      // overwrite newer data and the restore option disappears.
+      CounterRepository.clearIncomeExpenseBackup();
+      emit(
+        CounterState(
+          data: [...filterByDate()],
+          dateFilter: dateFilter,
+          loading: false,
+        ),
+      );
+    });
+
     add(InitEvent());
   }
 
@@ -300,6 +328,24 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
 
   final List<IncomeExpense> data = [];
   DateFilter dateFilter = DateFilter.all;
+
+  /// Returns [items] with every uncategorised entry assigned the
+  /// type-appropriate fallback category, so the list always has a label.
+  static List<IncomeExpense> _withDefaultCategories(List<IncomeExpense> items) {
+    final categories = CounterCategoryCubit.instance.state;
+    return items
+        .map(
+          (e) => e.category != null
+              ? e
+              : e.copyWith(
+                  category: defaultCategoryFor(
+                    e.amount < 0 ? CategoryType.expense : CategoryType.income,
+                    categories,
+                  ),
+                ),
+        )
+        .toList();
+  }
 
   List<IncomeExpense> filterByDate() {
     return data.reversed.where(

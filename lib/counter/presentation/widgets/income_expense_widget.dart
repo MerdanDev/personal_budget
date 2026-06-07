@@ -48,7 +48,10 @@ class IncomeExpenseWidget extends StatelessWidget {
           ' : ${element.category?.name ?? ''}',
         ),
         subtitle: element.description != null
-            ? Text(element.description!)
+            ? Text(
+                element.description!,
+                maxLines: 3,
+              )
             : null,
         trailing: IconButton(
           onPressed: () {

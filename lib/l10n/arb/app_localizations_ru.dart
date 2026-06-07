@@ -483,6 +483,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get radialChart => 'Радиальная диаграмма';
 
   @override
+  String get rateApp => 'Оценить приложение';
+
+  @override
+  String get rateAppSubtitle => 'Нравится приложение? Оставьте отзыв';
+
+  @override
+  String get rateAppFailed =>
+      'Не удалось открыть магазин. Повторите попытку позже.';
+
+  @override
   String get reacted => 'Отреагировал на сообщение';
 
   @override
@@ -516,10 +526,66 @@ class AppLocalizationsRu extends AppLocalizations {
   String get restore_backUp => 'Восстановление резервной копии';
 
   @override
+  String get restorePreUpdate => 'Восстановить данные до обновления';
+
+  @override
+  String get restorePreUpdateSubtitle =>
+      'Вернуть записи в том виде, в каком они были до последнего обновления приложения';
+
+  @override
+  String get restorePreUpdateConfirm =>
+      'Текущие записи будут заменены снимком, сохранённым перед последним обновлением приложения. Продолжить?';
+
+  @override
+  String get restoreSuccess => 'Данные восстановлены';
+
+  @override
   String get save => 'Сохранять';
 
   @override
   String get save_success => 'Успешно сохранено:';
+
+  @override
+  String get scanBetaBadge => 'Бета';
+
+  @override
+  String get scanBetaNotice =>
+      'Сканирование чеков работает в бета-режиме. Результат может отличаться, поэтому проверяйте сумму и описание перед сохранением.';
+
+  @override
+  String get scanFailed =>
+      'Не удалось распознать чек. Попробуйте сделать более чёткое фото.';
+
+  @override
+  String get scanInfo => 'О сканировании чеков';
+
+  @override
+  String get scanTip1 =>
+      'Используйте яркое равномерное освещение, избегайте бликов и теней.';
+
+  @override
+  String get scanTip2 => 'Положите чек на ровную контрастную поверхность.';
+
+  @override
+  String get scanTip3 => 'Заполните кадр чеком и держите его ровно.';
+
+  @override
+  String get scanTip4 => 'Держите телефон неподвижно, чтобы текст был чётким.';
+
+  @override
+  String get scanTipsTitle => 'Советы для хорошего снимка';
+
+  @override
+  String get scanFromCamera => 'Сделать фото';
+
+  @override
+  String get scanFromGallery => 'Выбрать из галереи';
+
+  @override
+  String get scanReceipt => 'Сканировать чек';
+
+  @override
+  String get scanningReceipt => 'Распознавание чека…';
 
   @override
   String get search => 'Поиск';

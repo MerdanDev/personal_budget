@@ -89,3 +89,10 @@ class RestoreBackUp extends CounterEvent {
   @override
   List<Object?> get props => [list];
 }
+
+/// Replaces the current entries with the one-time snapshot taken before the
+/// title→category migration. A recovery path for upgrading users.
+class RestorePreUpdateBackup extends CounterEvent {
+  @override
+  List<Object?> get props => [true];
+}

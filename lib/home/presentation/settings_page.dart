@@ -3,13 +3,19 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/counter/counter.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
+import 'package:wallet/counter/infrastructure/counter_repository.dart';
 import 'package:wallet/home/presentation/category_screen.dart';
 import 'package:wallet/l10n/application/localization_cubit.dart';
 import 'package:wallet/l10n/l10n.dart';
+
+/// App Store id for the iOS listing. Empty until the iOS app is published —
+/// fill it in then so the rate button can open the App Store on iOS.
+const String _appStoreId = '';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -52,6 +58,57 @@ class _SettingsPageState extends State<SettingsPage> {
     );
     if (symbol != null) {
       await CurrencyCubit.instance.changeSymbol(symbol);
+    }
+  }
+
+  Future<void> _restorePreUpdate(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final successMessage = context.l10n.restoreSuccess;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(context.l10n.restorePreUpdate),
+          content: Text(context.l10n.restorePreUpdateConfirm),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(context.l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(context.l10n.restorePreUpdate),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed ?? false) {
+      CounterBloc.instance.add(RestorePreUpdateBackup());
+      // Let the bloc process the event (it restores and clears the snapshot)
+      // before rebuilding so the now-redundant restore tile disappears.
+      await Future<void>.delayed(Duration.zero);
+      messenger.showSnackBar(
+        SnackBar(content: Text(successMessage)),
+      );
+      if (mounted) setState(() {});
+    }
+  }
+
+  Future<void> _rateApp(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final failedMessage = context.l10n.rateAppFailed;
+    final inAppReview = InAppReview.instance;
+    try {
+      // Open the store listing directly so the user can leave a review,
+      // since the native in-app prompt may be silently throttled.
+      await inAppReview.openStoreListing(
+        appStoreId: _appStoreId,
+      );
+    } on Object {
+      messenger.showSnackBar(
+        SnackBar(content: Text(failedMessage)),
+      );
     }
   }
 
@@ -142,6 +199,13 @@ class _SettingsPageState extends State<SettingsPage> {
               }
             },
           ),
+          if (CounterRepository.hasIncomeExpenseBackup())
+            ListTile(
+              leading: const Icon(Icons.restore),
+              title: Text(context.l10n.restorePreUpdate),
+              subtitle: Text(context.l10n.restorePreUpdateSubtitle),
+              onTap: () => _restorePreUpdate(context),
+            ),
           ListTile(
             leading: const Icon(Icons.language),
             title: Text(context.l10n.languageSettings),
@@ -172,6 +236,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 await LocalizationCubit.instance.changeLocale(selectedLanguage);
               }
             },
+          ),
+          ListTile(
+            leading: const Icon(Icons.star_outline),
+            title: Text(context.l10n.rateApp),
+            subtitle: Text(context.l10n.rateAppSubtitle),
+            onTap: () => _rateApp(context),
           ),
         ],
       ),

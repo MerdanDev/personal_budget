@@ -14,6 +14,7 @@ class CalendarPage extends StatefulWidget {
 
 class _CalendarPageState extends State<CalendarPage> {
   final EventController<IncomeExpense> _controller = EventController();
+  final GlobalKey<MonthViewState<IncomeExpense>> _monthViewKey = GlobalKey();
 
   @override
   void initState() {
@@ -38,10 +39,13 @@ class _CalendarPageState extends State<CalendarPage> {
 
     return Scaffold(
       body: MonthView<IncomeExpense>(
+        key: _monthViewKey,
         controller: _controller,
         borderColor: cls.outlineVariant,
         headerBuilder: (date) => MonthPageHeader(
           date: date,
+          onPreviousMonth: () => _monthViewKey.currentState?.previousPage(),
+          onNextMonth: () => _monthViewKey.currentState?.nextPage(),
           headerStyle: HeaderStyle(
             decoration: BoxDecoration(color: cls.primaryContainer),
             leftIconConfig: IconDataConfig(color: cls.onPrimaryContainer),
@@ -113,6 +117,7 @@ class CalendarDayScreen extends StatefulWidget {
 
 class _CalendarDayScreenState extends State<CalendarDayScreen> {
   final EventController<IncomeExpense> _controller = EventController();
+  final GlobalKey<DayViewState<IncomeExpense>> _dayViewKey = GlobalKey();
 
   @override
   void initState() {
@@ -142,11 +147,14 @@ class _CalendarDayScreenState extends State<CalendarDayScreen> {
     final locale = context.l10n.localeName;
     return Scaffold(
       body: DayView<IncomeExpense>(
+        key: _dayViewKey,
         initialDay: widget.date,
         controller: _controller,
         backgroundColor: cls.surface,
         dayTitleBuilder: (date) => DayPageHeader(
           date: date,
+          onPreviousDay: () => _dayViewKey.currentState?.previousPage(),
+          onNextDay: () => _dayViewKey.currentState?.nextPage(),
           headerStyle: HeaderStyle(
             decoration: BoxDecoration(color: cls.surface),
             leftIconConfig: IconDataConfig(color: cls.onSurface),

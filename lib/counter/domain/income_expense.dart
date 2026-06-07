@@ -55,6 +55,9 @@ class IncomeExpense extends Equatable {
   /// empty or merely echoes the category name; otherwise prepends it so its
   /// content survives. Idempotent: re-reading already-migrated data is a no-op
   /// because the title source is always null by then.
+  ///
+  /// A space (not a newline) joins the two so the result stays on one line —
+  /// important because CSV backups are parsed line by line.
   static String? _foldTitle(
     String? title,
     String? description,
@@ -67,7 +70,7 @@ class IncomeExpense extends Equatable {
     if (description == null || description.isEmpty) {
       return t;
     }
-    return '$t\n$description';
+    return '$t $description';
   }
   //</editor-fold>
 

@@ -481,6 +481,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get radialChart => 'Radial chart';
 
   @override
+  String get rateApp => 'Rate the app';
+
+  @override
+  String get rateAppSubtitle => 'Enjoying the app? Let us know with a review';
+
+  @override
+  String get rateAppFailed =>
+      'Couldn\'t open the store. Please try again later.';
+
+  @override
   String get reacted => 'Reacted to message';
 
   @override
@@ -513,10 +523,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restore_backUp => 'Restore back up';
 
   @override
+  String get restorePreUpdate => 'Restore data from before update';
+
+  @override
+  String get restorePreUpdateSubtitle =>
+      'Recover entries as they were before the last app update';
+
+  @override
+  String get restorePreUpdateConfirm =>
+      'This replaces your current entries with the snapshot saved before the last app update. Continue?';
+
+  @override
+  String get restoreSuccess => 'Data restored';
+
+  @override
   String get save => 'Save';
 
   @override
   String get save_success => 'Successfully saved:';
+
+  @override
+  String get scanBetaBadge => 'Beta';
+
+  @override
+  String get scanBetaNotice =>
+      'Receipt scanning is in beta. Results can vary, so please double-check the amount and description before saving.';
+
+  @override
+  String get scanFailed => 'Couldn\'t read the receipt. Try a clearer photo.';
+
+  @override
+  String get scanInfo => 'About receipt scanning';
+
+  @override
+  String get scanTip1 =>
+      'Use bright, even lighting and avoid glare or shadows.';
+
+  @override
+  String get scanTip2 => 'Lay the receipt flat on a contrasting surface.';
+
+  @override
+  String get scanTip3 =>
+      'Fill the frame with the receipt and keep it straight.';
+
+  @override
+  String get scanTip4 => 'Hold steady so the text stays sharp and in focus.';
+
+  @override
+  String get scanTipsTitle => 'Tips for a good scan';
+
+  @override
+  String get scanFromCamera => 'Take a photo';
+
+  @override
+  String get scanFromGallery => 'Choose from gallery';
+
+  @override
+  String get scanReceipt => 'Scan receipt';
+
+  @override
+  String get scanningReceipt => 'Reading receipt…';
 
   @override
   String get search => 'Search';

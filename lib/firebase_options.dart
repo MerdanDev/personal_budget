@@ -59,11 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDn7oheGxjGQoNzmgKnDb_4Y9eLeba7Gqs',
-    appId: '1:794238169340:ios:409fbf7d40b41a39526779',
+    appId: '1:794238169340:ios:6d8ff65a24f1877a526779',
     messagingSenderId: '794238169340',
     projectId: 'wallet-gapjyk',
     storageBucket: 'wallet-gapjyk.firebasestorage.app',
-    iosBundleId: 'dev.merdan.wallet',
+    iosBundleId: 'dev.merdan.wallet.WalletWidget',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'wallet-gapjyk.firebaseapp.com',
     storageBucket: 'wallet-gapjyk.firebasestorage.app',
   );
+
 }

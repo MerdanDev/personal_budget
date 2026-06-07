@@ -177,7 +177,7 @@ class NotificationService {
         tz.local,
       ),
       notificationDetails: notificationDetails(),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
     );
   }
 }

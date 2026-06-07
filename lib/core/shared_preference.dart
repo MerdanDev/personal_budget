@@ -78,4 +78,24 @@ class SingletonSharedPreference {
   static Future<bool> setOnboardingCompleted({required bool value}) {
     return instance._pref.setBool(KeyData.onboardingCompleted, value);
   }
+
+  static String? loadIncomeExpenseBackup() {
+    return instance._pref.getString(KeyData.incomeExpenseBackup);
+  }
+
+  static Future<bool> setIncomeExpenseBackup(String data) {
+    return instance._pref.setString(KeyData.incomeExpenseBackup, data);
+  }
+
+  static Future<bool> clearIncomeExpenseBackup() {
+    return instance._pref.remove(KeyData.incomeExpenseBackup);
+  }
+
+  static bool loadTitleCategoryMigrationDone() {
+    return instance._pref.getBool(KeyData.titleCategoryMigrationDone) ?? false;
+  }
+
+  static Future<bool> setTitleCategoryMigrationDone({required bool value}) {
+    return instance._pref.setBool(KeyData.titleCategoryMigrationDone, value);
+  }
 }

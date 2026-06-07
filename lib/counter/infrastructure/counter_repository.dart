@@ -31,6 +31,31 @@ class CounterRepository {
     }
   }
 
+  /// Whether a pre-migration snapshot of the income/expense data exists.
+  static bool hasIncomeExpenseBackup() {
+    final raw = SingletonSharedPreference.loadIncomeExpenseBackup();
+    return raw != null && raw.isNotEmpty;
+  }
+
+  /// Decodes the one-time snapshot taken before the title→category migration,
+  /// or null if none was stored.
+  static List<IncomeExpense>? getIncomeExpenseBackup() {
+    final raw = SingletonSharedPreference.loadIncomeExpenseBackup();
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+    final decoded = jsonDecode(raw) as List;
+    return decoded
+        .map((e) => IncomeExpense.fromMap(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Drops the pre-migration snapshot once it is no longer needed (e.g. after
+  /// a restore), so it cannot later overwrite newer data.
+  static Future<bool> clearIncomeExpenseBackup() {
+    return SingletonSharedPreference.clearIncomeExpenseBackup();
+  }
+
   static Future<bool> setCounterCategoryList(List<CounterCategory> data) async {
     return SingletonSharedPreference.setCounterCategory(
       jsonEncode(data.map((e) => e.toMap()).toList()),

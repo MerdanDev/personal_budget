@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import 'package:wallet/core/shared_preference.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
 import 'package:wallet/counter/counter.dart';
+import 'package:wallet/counter/cubit/budget_cubit.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/domain/default_categories.dart';
 import 'package:wallet/counter/infrastructure/counter_repository.dart';
@@ -105,6 +106,9 @@ class CounterCategoryCubit extends Cubit<List<CounterCategory>> {
     final update = [...state]..removeWhere((element) => element.uuid == uuid);
     CounterRepository.setCounterCategoryList(update);
     CounterBloc.instance.add(CategoryDelete(uuid: uuid));
+    // Drop any monthly budget tied to the removed category so it doesn't
+    // linger as an orphan.
+    BudgetCubit.instance.removeBudget(uuid);
     emit(update);
   }
 

@@ -1,14 +1,21 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wallet/core/currency_cubit.dart';
+import 'package:wallet/core/notification_service.dart';
 import 'package:wallet/core/shared_preference.dart';
 import 'package:wallet/core/utils.dart';
+import 'package:wallet/counter/cubit/budget_cubit.dart';
 import 'package:wallet/counter/cubit/category_cubit.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/domain/date_filter.dart';
 import 'package:wallet/counter/domain/default_categories.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
 import 'package:wallet/counter/infrastructure/counter_repository.dart';
+import 'package:wallet/l10n/application/localization_cubit.dart';
+import 'package:wallet/l10n/l10n.dart';
 
 part 'event.dart';
 part 'state.dart';
@@ -68,15 +75,21 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
     );
     on<IncomeExpenseEvent>((event, emit) {
       final now = DateTime.now();
+      final category = event.category ??
+          defaultCategoryFor(
+            event.amount < 0 ? CategoryType.expense : CategoryType.income,
+            CounterCategoryCubit.instance.state,
+          );
+      // Snapshot the month-to-date spend before this entry lands so a budget
+      // threshold crossing can be detected (expenses are negative amounts).
+      final spentBefore = event.amount < 0
+          ? BudgetCubit.spentThisMonth(category.uuid)
+          : 0.0;
       data.add(
         IncomeExpense(
           uuid: event.uuid,
           amount: event.amount,
-          category: event.category ??
-              defaultCategoryFor(
-                event.amount < 0 ? CategoryType.expense : CategoryType.income,
-                CounterCategoryCubit.instance.state,
-              ),
+          category: category,
           description: event.description,
           createdAt: now,
           updatedAt: now,
@@ -84,6 +97,15 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
       );
 
       CounterRepository.setIncomeExpenseList(data);
+      if (event.amount < 0) {
+        unawaited(
+          maybeNotifyBudgetThreshold(
+            category: category,
+            spentBefore: spentBefore,
+            spentAfter: spentBefore + event.amount.abs(),
+          ),
+        );
+      }
       emit(
         CounterState(
           data: [...filterByDate()],
@@ -347,6 +369,9 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         .toList();
   }
 
+  /// Fraction of the limit that raises the "approaching" alert.
+  static const double _budgetWarnRatio = 0.8;
+
   List<IncomeExpense> filterByDate() {
     return data.reversed.where(
       (element) {
@@ -384,5 +409,64 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         }
       },
     ).toList();
+  }
+}
+
+/// Fires a local notification when a new expense pushes [category]'s
+/// month-to-date spend across its budget's 100% or 80% threshold.
+///
+/// Only the highest threshold newly crossed is announced (so a single large
+/// expense that blows straight past both shows one "over budget" alert, not
+/// two). Nothing fires when the category has no budget or the threshold was
+/// already crossed before this expense. Best-effort: notification failures are
+/// swallowed so they can never disrupt saving a transaction.
+Future<void> maybeNotifyBudgetThreshold({
+  required CounterCategory category,
+  required double spentBefore,
+  required double spentAfter,
+}) async {
+  final budget = BudgetCubit.instance.budgetFor(category.uuid);
+  if (budget == null) return;
+  final limit = budget.limit;
+  if (limit <= 0) return;
+
+  final warnAt = limit * CounterBloc._budgetWarnRatio;
+  bool crossed(double threshold) =>
+      spentBefore < threshold && spentAfter >= threshold;
+
+  final l10n = lookupAppLocalizations(LocalizationCubit.instance.state);
+  final symbol = CurrencyCubit.instance.state;
+
+  String? title;
+  String? body;
+  var id = category.uuid.hashCode & 0x7fffffff;
+  if (crossed(limit)) {
+    title = l10n.budgetAlertOverTitle(category.name);
+    body = l10n.budgetAlertOverBody(
+      category.name,
+      formatAmount(limit, symbol),
+    );
+  } else if (crossed(warnAt)) {
+    title = l10n.budgetAlertWarnTitle(category.name);
+    body = l10n.budgetAlertWarnBody(
+      category.name,
+      formatAmount(spentAfter, symbol),
+      formatAmount(limit, symbol),
+    );
+    // Distinct id from the "over" alert so the warning is not overwritten if
+    // both fire across separate expenses in the same month.
+    id ^= 1;
+  } else {
+    return;
+  }
+
+  try {
+    await NotificationService().showNotification(
+      id: id,
+      title: title,
+      body: body,
+    );
+  } on Object {
+    // Ignore: a failed budget alert must never block recording an expense.
   }
 }

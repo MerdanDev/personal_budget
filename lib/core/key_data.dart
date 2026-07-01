@@ -5,6 +5,7 @@ class KeyData {
   static const String defaultDateFilter = 'defaultDateFilter';
   static const String incomeExpenseList = 'incomeExpenseList';
   static const String counterCategoryList = 'counterCategoryList';
+  static const String categoryBudgetList = 'categoryBudgetList';
   static const String notificationList = 'notificationList';
   static const String dateFilterState = 'dateFilterState';
   static const String defaultCategoriesSeeded = 'defaultCategoriesSeeded';

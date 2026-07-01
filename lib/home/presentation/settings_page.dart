@@ -9,6 +9,7 @@ import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/counter/counter.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
 import 'package:wallet/counter/infrastructure/counter_repository.dart';
+import 'package:wallet/home/presentation/budget_page.dart';
 import 'package:wallet/home/presentation/category_screen.dart';
 import 'package:wallet/l10n/application/localization_cubit.dart';
 import 'package:wallet/l10n/l10n.dart';
@@ -128,6 +129,20 @@ class _SettingsPageState extends State<SettingsPage> {
                 MaterialPageRoute<CategoryScreen>(
                   builder: (context) {
                     return const CategoryScreen();
+                  },
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.pie_chart_outline),
+            title: Text(context.l10n.budgets),
+            subtitle: Text(context.l10n.budgetsSubtitle),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<BudgetPage>(
+                  builder: (context) {
+                    return const BudgetPage();
                   },
                 ),
               );

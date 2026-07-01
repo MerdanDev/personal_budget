@@ -695,4 +695,65 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get yesterday => 'Вчера';
+
+  @override
+  String get budgets => 'Бюджеты';
+
+  @override
+  String get budgetsSubtitle =>
+      'Задайте месячные лимиты расходов по категориям';
+
+  @override
+  String get monthlyLimit => 'Месячный лимит';
+
+  @override
+  String get setLimit => 'Задать лимит';
+
+  @override
+  String get noLimitSet => 'Лимит не задан';
+
+  @override
+  String get editBudget => 'Изменить бюджет';
+
+  @override
+  String get removeBudget => 'Удалить бюджет';
+
+  @override
+  String get budgetsEmpty =>
+      'Сначала добавьте категорию расходов, чтобы начать планировать бюджет.';
+
+  @override
+  String budgetSpentOfLimit(String spent, String limit) {
+    return '$spent из $limit';
+  }
+
+  @override
+  String budgetRemainingAmount(String amount) {
+    return 'осталось $amount';
+  }
+
+  @override
+  String budgetOverAmount(String amount) {
+    return 'превышение на $amount';
+  }
+
+  @override
+  String budgetAlertOverTitle(String category) {
+    return 'Бюджет «$category» исчерпан';
+  }
+
+  @override
+  String budgetAlertOverBody(String category, String limit) {
+    return 'Вы достигли бюджета «$category» в размере $limit.';
+  }
+
+  @override
+  String budgetAlertWarnTitle(String category) {
+    return 'Предупреждение по бюджету «$category»';
+  }
+
+  @override
+  String budgetAlertWarnBody(String category, String spent, String limit) {
+    return 'Вы израсходовали $spent из бюджета «$category» в размере $limit.';
+  }
 }

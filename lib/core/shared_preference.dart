@@ -39,6 +39,14 @@ class SingletonSharedPreference {
     return instance._pref.setString(KeyData.counterCategoryList, data);
   }
 
+  static String? loadCategoryBudgetList() {
+    return instance._pref.getString(KeyData.categoryBudgetList);
+  }
+
+  static Future<bool> setCategoryBudgetList(String data) {
+    return instance._pref.setString(KeyData.categoryBudgetList, data);
+  }
+
   static String? loadNotificationList() {
     return instance._pref.getString(KeyData.notificationList);
   }

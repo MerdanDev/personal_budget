@@ -692,4 +692,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yesterday => 'Yesterday';
+
+  @override
+  String get budgets => 'Budgets';
+
+  @override
+  String get budgetsSubtitle => 'Set monthly spending limits per category';
+
+  @override
+  String get monthlyLimit => 'Monthly limit';
+
+  @override
+  String get setLimit => 'Set limit';
+
+  @override
+  String get noLimitSet => 'No limit set';
+
+  @override
+  String get editBudget => 'Edit budget';
+
+  @override
+  String get removeBudget => 'Remove budget';
+
+  @override
+  String get budgetsEmpty =>
+      'Add an expense category first to start budgeting.';
+
+  @override
+  String budgetSpentOfLimit(String spent, String limit) {
+    return '$spent of $limit';
+  }
+
+  @override
+  String budgetRemainingAmount(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String budgetOverAmount(String amount) {
+    return '$amount over';
+  }
+
+  @override
+  String budgetAlertOverTitle(String category) {
+    return '$category budget reached';
+  }
+
+  @override
+  String budgetAlertOverBody(String category, String limit) {
+    return 'You\'ve reached your $category budget of $limit.';
+  }
+
+  @override
+  String budgetAlertWarnTitle(String category) {
+    return '$category budget alert';
+  }
+
+  @override
+  String budgetAlertWarnBody(String category, String spent, String limit) {
+    return 'You\'ve used $spent of your $limit $category budget.';
+  }
 }

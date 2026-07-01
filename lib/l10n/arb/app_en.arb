@@ -253,5 +253,59 @@
   "writeMessage": "Write message",
   "year": "year",
   "yes": "Yes",
-  "yesterday": "Yesterday"
+  "yesterday": "Yesterday",
+  "budgets": "Budgets",
+  "budgetsSubtitle": "Set monthly spending limits per category",
+  "monthlyLimit": "Monthly limit",
+  "setLimit": "Set limit",
+  "noLimitSet": "No limit set",
+  "editBudget": "Edit budget",
+  "removeBudget": "Remove budget",
+  "budgetsEmpty": "Add an expense category first to start budgeting.",
+  "budgetSpentOfLimit": "{spent} of {limit}",
+  "@budgetSpentOfLimit": {
+    "placeholders": {
+      "spent": { "type": "String" },
+      "limit": { "type": "String" }
+    }
+  },
+  "budgetRemainingAmount": "{amount} left",
+  "@budgetRemainingAmount": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "budgetOverAmount": "{amount} over",
+  "@budgetOverAmount": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "budgetAlertOverTitle": "{category} budget reached",
+  "@budgetAlertOverTitle": {
+    "placeholders": {
+      "category": { "type": "String" }
+    }
+  },
+  "budgetAlertOverBody": "You've reached your {category} budget of {limit}.",
+  "@budgetAlertOverBody": {
+    "placeholders": {
+      "category": { "type": "String" },
+      "limit": { "type": "String" }
+    }
+  },
+  "budgetAlertWarnTitle": "{category} budget alert",
+  "@budgetAlertWarnTitle": {
+    "placeholders": {
+      "category": { "type": "String" }
+    }
+  },
+  "budgetAlertWarnBody": "You've used {spent} of your {limit} {category} budget.",
+  "@budgetAlertWarnBody": {
+    "placeholders": {
+      "category": { "type": "String" },
+      "spent": { "type": "String" },
+      "limit": { "type": "String" }
+    }
+  }
 }

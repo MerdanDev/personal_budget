@@ -1407,6 +1407,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yesterday'**
   String get yesterday;
+
+  /// No description provided for @budgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets'**
+  String get budgets;
+
+  /// No description provided for @budgetsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set monthly spending limits per category'**
+  String get budgetsSubtitle;
+
+  /// No description provided for @monthlyLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly limit'**
+  String get monthlyLimit;
+
+  /// No description provided for @setLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Set limit'**
+  String get setLimit;
+
+  /// No description provided for @noLimitSet.
+  ///
+  /// In en, this message translates to:
+  /// **'No limit set'**
+  String get noLimitSet;
+
+  /// No description provided for @editBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit budget'**
+  String get editBudget;
+
+  /// No description provided for @removeBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove budget'**
+  String get removeBudget;
+
+  /// No description provided for @budgetsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an expense category first to start budgeting.'**
+  String get budgetsEmpty;
+
+  /// No description provided for @budgetSpentOfLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'{spent} of {limit}'**
+  String budgetSpentOfLimit(String spent, String limit);
+
+  /// No description provided for @budgetRemainingAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} left'**
+  String budgetRemainingAmount(String amount);
+
+  /// No description provided for @budgetOverAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} over'**
+  String budgetOverAmount(String amount);
+
+  /// No description provided for @budgetAlertOverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} budget reached'**
+  String budgetAlertOverTitle(String category);
+
+  /// No description provided for @budgetAlertOverBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached your {category} budget of {limit}.'**
+  String budgetAlertOverBody(String category, String limit);
+
+  /// No description provided for @budgetAlertWarnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} budget alert'**
+  String budgetAlertWarnTitle(String category);
+
+  /// No description provided for @budgetAlertWarnBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used {spent} of your {limit} {category} budget.'**
+  String budgetAlertWarnBody(String category, String spent, String limit);
 }
 
 class _AppLocalizationsDelegate

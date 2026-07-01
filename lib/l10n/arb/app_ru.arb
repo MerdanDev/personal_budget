@@ -253,5 +253,20 @@
   "writeMessage": "Написать сообщение",
   "year": "год",
   "yes": "Да",
-  "yesterday": "Вчера"
+  "yesterday": "Вчера",
+  "budgets": "Бюджеты",
+  "budgetsSubtitle": "Задайте месячные лимиты расходов по категориям",
+  "monthlyLimit": "Месячный лимит",
+  "setLimit": "Задать лимит",
+  "noLimitSet": "Лимит не задан",
+  "editBudget": "Изменить бюджет",
+  "removeBudget": "Удалить бюджет",
+  "budgetsEmpty": "Сначала добавьте категорию расходов, чтобы начать планировать бюджет.",
+  "budgetSpentOfLimit": "{spent} из {limit}",
+  "budgetRemainingAmount": "осталось {amount}",
+  "budgetOverAmount": "превышение на {amount}",
+  "budgetAlertOverTitle": "Бюджет «{category}» исчерпан",
+  "budgetAlertOverBody": "Вы достигли бюджета «{category}» в размере {limit}.",
+  "budgetAlertWarnTitle": "Предупреждение по бюджету «{category}»",
+  "budgetAlertWarnBody": "Вы израсходовали {spent} из бюджета «{category}» в размере {limit}."
 }

@@ -688,4 +688,65 @@ class AppLocalizationsTk extends AppLocalizations {
 
   @override
   String get yesterday => 'Düýn';
+
+  @override
+  String get budgets => 'Býujetler';
+
+  @override
+  String get budgetsSubtitle =>
+      'Kategoriýalar boýunça aýlyk çykdajy çäklerini belläň';
+
+  @override
+  String get monthlyLimit => 'Aýlyk çäk';
+
+  @override
+  String get setLimit => 'Çäk bellemek';
+
+  @override
+  String get noLimitSet => 'Çäk bellenmedik';
+
+  @override
+  String get editBudget => 'Býujeti üýtgetmek';
+
+  @override
+  String get removeBudget => 'Býujeti aýyrmak';
+
+  @override
+  String get budgetsEmpty =>
+      'Býujet düzmek üçin ilki çykdajy kategoriýasyny goşuň.';
+
+  @override
+  String budgetSpentOfLimit(String spent, String limit) {
+    return '$limit çäkden $spent';
+  }
+
+  @override
+  String budgetRemainingAmount(String amount) {
+    return '$amount galdy';
+  }
+
+  @override
+  String budgetOverAmount(String amount) {
+    return '$amount artyk';
+  }
+
+  @override
+  String budgetAlertOverTitle(String category) {
+    return '«$category» býujeti gutardy';
+  }
+
+  @override
+  String budgetAlertOverBody(String category, String limit) {
+    return '«$category» býujetiniň $limit çägine ýetdiňiz.';
+  }
+
+  @override
+  String budgetAlertWarnTitle(String category) {
+    return '«$category» býujet duýduryşy';
+  }
+
+  @override
+  String budgetAlertWarnBody(String category, String spent, String limit) {
+    return '«$category» býujetiniň $limit çäginden $spent harçladyňyz.';
+  }
 }

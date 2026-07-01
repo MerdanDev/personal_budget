@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:wallet/core/shared_preference.dart';
 import 'package:wallet/core/widget_service.dart';
+import 'package:wallet/counter/domain/category_budget.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/domain/date_filter.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
@@ -71,6 +72,25 @@ class CounterRepository {
 
       return decoded
           .map((e) => CounterCategory.fromMap(e as Map<String, dynamic>))
+          .toList();
+    }
+  }
+
+  static Future<bool> setCategoryBudgetList(List<CategoryBudget> data) async {
+    return SingletonSharedPreference.setCategoryBudgetList(
+      jsonEncode(data.map((e) => e.toMap()).toList()),
+    );
+  }
+
+  static List<CategoryBudget> getCategoryBudgetList() {
+    final rawData = SingletonSharedPreference.loadCategoryBudgetList();
+    if (rawData == null) {
+      return [];
+    } else {
+      final decoded = jsonDecode(rawData) as List;
+
+      return decoded
+          .map((e) => CategoryBudget.fromMap(e as Map<String, dynamic>))
           .toList();
     }
   }

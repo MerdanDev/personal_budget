@@ -253,5 +253,20 @@
   "writeMessage": "Hat ýazmak",
   "year": "ýyl",
   "yes": "Hawa",
-  "yesterday": "Düýn"
+  "yesterday": "Düýn",
+  "budgets": "Býujetler",
+  "budgetsSubtitle": "Kategoriýalar boýunça aýlyk çykdajy çäklerini belläň",
+  "monthlyLimit": "Aýlyk çäk",
+  "setLimit": "Çäk bellemek",
+  "noLimitSet": "Çäk bellenmedik",
+  "editBudget": "Býujeti üýtgetmek",
+  "removeBudget": "Býujeti aýyrmak",
+  "budgetsEmpty": "Býujet düzmek üçin ilki çykdajy kategoriýasyny goşuň.",
+  "budgetSpentOfLimit": "{limit} çäkden {spent}",
+  "budgetRemainingAmount": "{amount} galdy",
+  "budgetOverAmount": "{amount} artyk",
+  "budgetAlertOverTitle": "«{category}» býujeti gutardy",
+  "budgetAlertOverBody": "«{category}» býujetiniň {limit} çägine ýetdiňiz.",
+  "budgetAlertWarnTitle": "«{category}» býujet duýduryşy",
+  "budgetAlertWarnBody": "«{category}» býujetiniň {limit} çäginden {spent} harçladyňyz."
 }

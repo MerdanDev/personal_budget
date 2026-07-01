@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:wallet/core/analytics_service.dart';
 import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/core/notification_service.dart';
 import 'package:wallet/core/push_notification_service.dart';
@@ -40,6 +41,9 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Anonymous usage analytics (DAU/WAU/MAU) — no user is identified.
+  await AnalyticsService.init();
 
   final notificationService = NotificationService();
   await notificationService.initNotification();

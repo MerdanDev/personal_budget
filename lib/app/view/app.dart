@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wallet/core/analytics_service.dart';
 import 'package:wallet/core/color_schemes.g.dart';
 import 'package:wallet/core/push_notification_service.dart';
 import 'package:wallet/core/shared_preference.dart';
@@ -14,6 +15,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: navigatorKey,
+      navigatorObservers: [AnalyticsService.observer],
       title: 'Gapjyk',
       darkTheme: ThemeData.dark().copyWith(
         colorScheme: darkColorScheme,

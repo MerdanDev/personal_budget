@@ -4,6 +4,7 @@ import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
 import 'package:wallet/counter/presentation/widgets/add_income_expense_dialog.dart';
+import 'package:wallet/counter/presentation/widgets/category_icon_widget.dart';
 import 'package:wallet/counter/presentation/widgets/delete_dialog.dart';
 
 class IncomeExpenseWidget extends StatelessWidget {
@@ -43,9 +44,23 @@ class IncomeExpenseWidget extends StatelessWidget {
                 Icons.arrow_downward_rounded,
                 color: Colors.redAccent,
               ),
-        title: Text(
-          '${formatAmount(element.amount, symbol)}'
-          ' : ${element.category?.name ?? ''}',
+        title: Row(
+          children: [
+            if (element.category?.iconCode != null) ...[
+              CategoryIcon(
+                iconCode: element.category!.iconCode!,
+                colorCode: element.category!.colorCode,
+                size: 18,
+              ),
+              const SizedBox(width: 6),
+            ],
+            Expanded(
+              child: Text(
+                '${formatAmount(element.amount, symbol)}'
+                ' : ${element.category?.name ?? ''}',
+              ),
+            ),
+          ],
         ),
         subtitle: element.description != null
             ? Text(
@@ -67,9 +82,6 @@ class IncomeExpenseWidget extends StatelessWidget {
           },
           icon: const Icon(Icons.edit),
         ),
-        // trailing: element.category != null
-        //     ? Icon(IconData(element.category!.iconCode!), )
-        //     : null,
       ),
     );
   }

@@ -32,7 +32,10 @@ class AppBlocObserver extends BlocObserver {
   }
 }
 
-Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
+Future<void> bootstrap(
+  FutureOr<Widget> Function() builder, {
+  FutureOr<void> Function()? onPrefsReady,
+}) async {
   FlutterError.onError = (details) {
     log(details.exceptionAsString(), stackTrace: details.stack);
   };
@@ -56,6 +59,12 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   Bloc.observer = const AppBlocObserver();
   final pref = await SharedPreferences.getInstance();
   SingletonSharedPreference.init(pref);
+
+  // Optional hook (dev flavor only) to prime SharedPreferences before the
+  // bloc/cubit singletons read their initial state — e.g. seeding demo data.
+  if (onPrefsReady != null) {
+    await onPrefsReady();
+  }
 
   // Bridge balance/income/expense to the home-screen widget and start
   // listening for its button taps. Reads persisted data directly, so it only

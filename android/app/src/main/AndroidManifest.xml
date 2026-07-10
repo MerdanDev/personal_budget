@@ -1,10 +1,20 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- We do not use the advertising ID. Firebase Analytics (via
+         play-services-measurement) declares these permissions by default, so we
+         explicitly strip them from the merged manifest to keep the app free of
+         advertising-ID collection: the legacy Google Play services AD_ID and
+         the Android 13+ Privacy Sandbox AdServices Ad ID API. -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
+        tools:node="remove" />
    <application
         android:label="${appName}"
         android:name="${applicationName}"
@@ -35,6 +45,12 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Belt-and-suspenders with the AD_ID permission removal above:
+             tell Firebase Analytics not to collect the Advertising ID. Core
+             analytics (events, sessions, retention) is unaffected. -->
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
         <!-- Default channel used by FCM for system-rendered (background /
              terminated) notifications. Must match the `high_importance_channel`
              created in NotificationService so background and foreground pushes

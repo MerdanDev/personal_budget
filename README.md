@@ -172,6 +172,86 @@ flutter gen-l10n --arb-dir="lib/l10n/arb"
 
 Alternatively, run `flutter run` and code generation will take place automatically.
 
+---
+
+## Play Store Listing 🏪
+
+### English
+
+**Short description** (max 80 chars)
+
+```
+Track income & expenses, set budgets, and take control of your money.
+```
+
+**Full description**
+
+```
+Gapjyk — Simple Personal Budget & Expense Tracker
+
+Take control of your money with Gapjyk, a clean and easy personal finance app that helps you track every income and expense, stick to monthly budgets, and understand exactly where your money goes.
+
+Whether you're saving for a goal, cutting back on spending, or just want to know your balance at a glance, Gapjyk keeps your finances organized — right on your device, with no account required.
+
+KEY FEATURES
+
+• Quick income & expense tracking — Add a transaction in seconds with an amount, category, and note.
+• Smart categories — Start with ready-made categories or create your own, each with a custom icon and color.
+• Monthly budgets — Set a spending limit per category and get alerts when you reach 80% and 100% of your budget.
+• Calendar view — See daily net totals at a glance, with color-coded entries and a summary for each day.
+• Charts & insights — Visualize your spending and income to spot trends over time.
+• Flexible filters — View your finances by day, week, month, year, or all time.
+• Scan receipts — Capture a receipt with your camera and let text recognition fill in the details.
+• Home screen widget — Check your balance without even opening the app.
+• Reminders — Schedule notifications so you never forget to log your spending.
+• Any currency — Use any currency symbol or code you like.
+• Backup & restore — Export your data to a CSV file and restore it anytime.
+• Multi-language — Available in Turkmen, English, and Russian.
+
+PRIVATE BY DESIGN
+Your financial data is stored locally on your device. No sign-up, and no ads getting in the way of your budgeting.
+
+Start building better money habits today with Gapjyk.
+```
+
+### Türkmençe
+
+**Gysga düşündiriş** (max 80 belgi)
+
+```
+Girdeji-çykdajylaryňy yzarla, býujet belle we puluňy dolandyr.
+```
+
+**Doly düşündiriş**
+
+```
+Gapjyk — Ýönekeý Şahsy Býujet we Çykdajy Hasaplaýjy
+
+Puluňy dolandyr — Gapjyk arkaly her girdejini we çykdajyny yzarla, aýlyk býujetiňe eýer we puluňy nirä sarp edýändigiňi anyk bil. Arassa hem ýönekeý interfeýsli şahsy maliýe programmasy.
+
+Maksat üçin pul ýygnaýarsyňmy, çykdajylaryňy azaltjak bolýarsyňmy ýa-da diňe balansyňy bir seretmede görmek isleýärsiňmi — Gapjyk maliýäňi tertipli saklaýar. Ähli zat öz enjamyňda, hasap açmak talap edilmeýär.
+
+ESASY MÜMKINÇILIKLER
+
+• Çalt girdeji-çykdajy hasaby — Mukdary, kategoriýany we belligi bilen amaly birnäçe sekuntda goş.
+• Akylly kategoriýalar — Taýýar kategoriýalardan başla ýa-da öz kategoriýalaryňy döret, her biri üçin nyşan we reňk saýla.
+• Aýlyk býujetler — Her kategoriýa üçin çykdajy çägini belle we çägiň 80%-ine hem-de 100%-ine ýeteniňde duýduryş al.
+• Senenama görnüşi — Her günüň jemi balansyny bir seretmede gör, reňkli ýazgylar we günlük jemler bilen.
+• Grafikler we derňew — Çykdajylaryňy we girdejileriňi görnükli grafiklerde synla, ugurlary aňsat tap.
+• Çeýe süzgüçler — Maliýäňi gün, hepde, aý, ýyl ýa-da ähli döwür boýunça gör.
+• Çekleri skanirle — Kamera bilen çeki düşür, tekst tanamak maglumatlary awtomatiki doldursyn.
+• Baş ekran widjeti — Programmany açman balansyňy gör.
+• Ýatlatmalar — Bildirişleri meýilleşdir, çykdajylaryňy ýazmagy hiç haçan unutma.
+• Islendik pul birligi — Islendik pul belgisini ýa-da kodyny ulan.
+• Ätiýaçlyk nusga we dikeltme — Maglumatlaryňy CSV faýla göçür we islän wagtyň dikelt.
+• Köp dilli — Türkmen, iňlis we rus dillerinde elýeterli.
+
+GIZLINLIK ILKINJI ORUNDA
+Maliýe maglumatlaryň diňe öz enjamyňda saklanýar. Hasaba durmak ýok, býujetiňe päsgel berýän mahabat ýok.
+
+Şu gün Gapjyk bilen has gowy pul endiklerini döretmäge başla.
+```
+
 [coverage_badge]: coverage_badge.svg
 [flutter_localizations_link]: https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html
 [internationalization_link]: https://flutter.dev/docs/development/accessibility-and-localization/internationalization

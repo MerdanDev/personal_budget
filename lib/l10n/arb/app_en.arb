@@ -271,6 +271,7 @@
   "editBudget": "Edit budget",
   "removeBudget": "Remove budget",
   "budgetsEmpty": "Add an expense category first to start budgeting.",
+  "budgetChartUnassignedNotice": "These categories aren't assigned a budget. Please add a budget for them.",
   "budgetSpentOfLimit": "{spent} of {limit}",
   "@budgetSpentOfLimit": {
     "placeholders": {

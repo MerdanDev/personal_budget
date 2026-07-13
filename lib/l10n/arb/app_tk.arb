@@ -266,6 +266,7 @@
   "editBudget": "Býujeti üýtgetmek",
   "removeBudget": "Býujeti aýyrmak",
   "budgetsEmpty": "Býujet düzmek üçin ilki çykdajy kategoriýasyny goşuň.",
+  "budgetChartUnassignedNotice": "Bu kategoriýalara býudjet bellenilmedik. Haýyş, olar üçin býudjet goşuň.",
   "budgetSpentOfLimit": "{limit} çäkden {spent}",
   "budgetRemainingAmount": "{amount} galdy",
   "budgetOverAmount": "{amount} artyk",

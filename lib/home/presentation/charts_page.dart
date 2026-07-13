@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/core/utils.dart';
 import 'package:wallet/counter/bloc/bloc.dart';
+import 'package:wallet/counter/cubit/budget_cubit.dart';
 import 'package:wallet/counter/cubit/category_cubit.dart';
+import 'package:wallet/counter/domain/category_budget.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
 import 'package:wallet/counter/domain/income_expense.dart';
+import 'package:wallet/counter/presentation/widgets/budget_editor.dart';
+import 'package:wallet/counter/presentation/widgets/category_icon_widget.dart';
 import 'package:wallet/l10n/l10n.dart';
 
 class CandleChartPage extends StatefulWidget {
@@ -28,6 +33,11 @@ class CandleChartPageState extends State<CandleChartPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Use most of the available screen height instead of a fixed 450px box, so
+    // the budget-progress list has room to breathe on tall phones.
+    final areaHeight =
+        (MediaQuery.sizeOf(context).height * 0.68).clamp(420.0, 720.0);
+    final chartHeight = areaHeight - 90;
     return DefaultTabController(
       length: 2,
       initialIndex: current,
@@ -46,15 +56,15 @@ class CandleChartPageState extends State<CandleChartPage> {
                 icon: const Icon(Icons.candlestick_chart_outlined),
               ),
               Tab(
-                text: context.l10n.radialChart,
-                icon: const Icon(Icons.radar_outlined),
+                text: context.l10n.budgets,
+                icon: const Icon(Icons.savings_outlined),
               ),
             ],
           ),
         ),
         body: SingleChildScrollView(
           child: SizedBox(
-            height: 450,
+            height: areaHeight,
             child: BlocBuilder<CounterBloc, CounterState>(
               bloc: CounterBloc.instance,
               builder: (context, state) {
@@ -129,7 +139,7 @@ class CandleChartPageState extends State<CandleChartPage> {
                           height: 16,
                         ),
                         SizedBox(
-                          height: 350,
+                          height: chartHeight,
                           child: Padding(
                             padding: const EdgeInsets.only(right: 16, left: 6),
                             child: current == 0
@@ -170,86 +180,314 @@ class RadialChartWidget extends StatefulWidget {
 }
 
 class _RadialChartWidgetState extends State<RadialChartWidget> {
-  @override
-  Widget build(BuildContext context) {
-    final chartData = <_RadialChartData>[];
-    final categories = CounterCategoryCubit.instance.state;
-    var income = .0;
-    var categoryLess = .0;
-
-    final categoryLessData = widget.data
-        .where((e) => e.category == null && e.amount < 0)
-        .map((e) => e.amount);
-    if (categoryLessData.isNotEmpty) {
-      categoryLess = categoryLessData.reduce((a, b) => a + b);
-    }
-
-    chartData.add(
-      _RadialChartData(
-        context.l10n.withoutCategory,
-        categoryLess * -1,
-        1,
-        Colors.grey,
-      ),
-    );
-
-    for (final category in categories.where(
-      (e) => e.type == CategoryType.expense,
-    )) {
-      final mapped = widget.data
-          .where((e) => e.category == category)
-          .map((e) => e.amount)
-          .toList();
-      if (mapped.isNotEmpty) {
-        final amount = mapped.reduce((a, b) => a + b);
-        chartData.add(
-          _RadialChartData(
-            category.name,
-            amount > 0 ? amount : amount * -1,
-            mapped.length,
-            category.colorCode != null ? Color(category.colorCode!) : null,
-          ),
-        );
+  /// Total spent (as a positive amount) for [category] within this page's
+  /// month. Expenses are stored as negative amounts, so only those are summed.
+  double _spentFor(CounterCategory category) {
+    var spent = 0.0;
+    for (final e in widget.data) {
+      if (e.category?.uuid == category.uuid && e.amount < 0) {
+        spent += e.amount.abs();
       }
     }
-    final incomes =
-        widget.data.where((e) => e.amount > 0).map((e) => e.amount).toList();
-    if (incomes.isNotEmpty) {
-      income += incomes.reduce((a, b) => a + b);
-    }
-    chartData.add(
-      _RadialChartData(context.l10n.income, income, 1, Colors.green),
-    );
-    // final maxCount =
-    //     chartData.map((e) => e.count).reduce((a, b) => a > b ? a : b);
+    return spent;
+  }
 
-    final maxAmount = chartData.map((e) => e.y).reduce((a, b) => a > b ? a : b);
-    return SfCircularChart(
-      tooltipBehavior: TooltipBehavior(
-        enable: true,
-      ),
-      series: <CircularSeries<_RadialChartData, String>>[
-        RadialBarSeries<_RadialChartData, String>(
-          dataSource: chartData,
-          useSeriesColor: true,
-          trackOpacity: 0.3,
-          cornerStyle: CornerStyle.bothCurve,
-          pointColorMapper: (data, _) => data.color,
-          xValueMapper: (data, _) => data.x,
-          yValueMapper: (data, _) => data.y,
-          dataLabelMapper: (data, _) => data.x,
-          maximumValue: maxAmount,
-          dataLabelSettings: DataLabelSettings(
-            isVisible: true,
-            textStyle: Theme.of(context).textTheme.labelSmall,
-            // connectorLineSettings: ConnectorLineSettings(
-            //   type: ConnectorType.curve,
-            //   length: '25%',
-            // ),
+  Future<void> _edit(CounterCategory category, CategoryBudget? existing) async {
+    await showBudgetEditor(context, category, existing);
+    // The editor mutates BudgetCubit; rebuild so the new limit is reflected.
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Budget progress is shown as one horizontal bar per category — clearer to
+    // track than concentric rings, where equal percentages look unequal because
+    // inner rings are shorter. Categories with spending but no budget are
+    // listed below with an "add budget" action so a limit can be set here.
+    final budgeted = <CounterCategory>[];
+    final unbudgeted = <CounterCategory>[];
+
+    for (final category in CounterCategoryCubit.instance.state
+        .where((e) => e.type == CategoryType.expense)) {
+      final budget = BudgetCubit.instance.budgetFor(category.uuid);
+      if (budget != null && budget.limit > 0) {
+        budgeted.add(category);
+      } else if (_spentFor(category) > 0) {
+        // Only surface categories the user actually spent in this month.
+        unbudgeted.add(category);
+      }
+    }
+
+    if (budgeted.isEmpty && unbudgeted.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            context.l10n.budgetChartUnassignedNotice,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
-          // pointRadiusMapper: (data, _) => '${(100 / maxCount) * data.count}%',
         ),
+      );
+    }
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      children: [
+        if (budgeted.isNotEmpty) ...[
+          _OverallBudgetSummary(
+            totalSpent: budgeted.fold<double>(0, (s, c) => s + _spentFor(c)),
+            totalLimit: budgeted.fold<double>(
+              0,
+              (s, c) => s + BudgetCubit.instance.budgetFor(c.uuid)!.limit,
+            ),
+          ),
+          const SizedBox(height: 8),
+          for (final c in budgeted)
+            _BudgetProgressTile(
+              category: c,
+              spent: _spentFor(c),
+              budget: BudgetCubit.instance.budgetFor(c.uuid),
+              onTap: () => _edit(c, BudgetCubit.instance.budgetFor(c.uuid)),
+            ),
+        ],
+        if (unbudgeted.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+            child: Text(
+              context.l10n.budgetChartUnassignedNotice,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          for (final c in unbudgeted)
+            _BudgetProgressTile(
+              category: c,
+              spent: _spentFor(c),
+              budget: null,
+              onTap: () => _edit(c, null),
+            ),
+        ],
       ],
+    );
+  }
+}
+
+/// A compact card showing the combined budget usage across every budgeted
+/// category for the month — an at-a-glance overview above the category rows.
+class _OverallBudgetSummary extends StatelessWidget {
+  const _OverallBudgetSummary({
+    required this.totalSpent,
+    required this.totalLimit,
+  });
+
+  final double totalSpent;
+  final double totalLimit;
+
+  @override
+  Widget build(BuildContext context) {
+    final cls = Theme.of(context).colorScheme;
+    final symbol = CurrencyCubit.instance.state;
+    final ratio = totalLimit <= 0 ? 0.0 : totalSpent / totalLimit;
+    final over = totalSpent > totalLimit;
+    final color = over
+        ? cls.error
+        : ratio >= 0.8
+            ? Colors.orange
+            : cls.primary;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cls.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.l10n.budgets,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Text(
+                '${(ratio * 100).round()}%',
+                style: TextStyle(
+                  color: over ? cls.error : cls.onSurfaceVariant,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: ratio.clamp(0.0, 1.0),
+              minHeight: 10,
+              backgroundColor: cls.surface,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            context.l10n.budgetSpentOfLimit(
+              formatAmount(totalSpent, symbol),
+              formatAmount(totalLimit, symbol),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One tappable row of the budget tracker. With a [budget] it shows a progress
+/// bar (spent vs limit, colour-coded by how close to the limit); without one it
+/// invites the user to set a limit for [category].
+class _BudgetProgressTile extends StatelessWidget {
+  const _BudgetProgressTile({
+    required this.category,
+    required this.spent,
+    required this.budget,
+    required this.onTap,
+  });
+
+  final CounterCategory category;
+  final double spent;
+  final CategoryBudget? budget;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final cls = Theme.of(context).colorScheme;
+    final symbol = CurrencyCubit.instance.state;
+
+    final leading = CircleAvatar(
+      radius: 18,
+      backgroundColor: category.colorCode != null
+          ? Color(category.colorCode!).withValues(alpha: 0.15)
+          : cls.surfaceContainerHighest,
+      child: CategoryIcon(
+        iconCode: category.iconCode ?? 0,
+        colorCode: category.colorCode,
+        size: 20,
+      ),
+    );
+
+    if (budget == null) {
+      return InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            children: [
+              leading,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(category.name),
+                    Text(
+                      context.l10n.noLimitSet,
+                      style: TextStyle(color: cls.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.add_circle_outline, color: cls.primary),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final limit = budget!.limit;
+    final ratio = limit <= 0 ? 0.0 : spent / limit;
+    final over = spent > limit;
+    final Color barColor;
+    if (over) {
+      barColor = cls.error;
+    } else if (ratio >= 0.8) {
+      barColor = Colors.orange;
+    } else {
+      barColor = cls.primary;
+    }
+
+    final remainingLabel = over
+        ? context.l10n.budgetOverAmount(formatAmount(spent - limit, symbol))
+        : context.l10n
+            .budgetRemainingAmount(formatAmount(limit - spent, symbol));
+
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            leading,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(child: Text(category.name)),
+                      Text(
+                        '${(ratio * 100).round()}%',
+                        style: TextStyle(
+                          color: over ? cls.error : cls.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: ratio.clamp(0.0, 1.0),
+                      minHeight: 8,
+                      backgroundColor: cls.surfaceContainerHighest,
+                      color: barColor,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          context.l10n.budgetSpentOfLimit(
+                            formatAmount(spent, symbol),
+                            formatAmount(limit, symbol),
+                          ),
+                          style: TextStyle(color: cls.onSurfaceVariant),
+                        ),
+                      ),
+                      Text(
+                        remainingLabel,
+                        style: TextStyle(
+                          color: over ? cls.error : cls.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -389,12 +627,4 @@ class _CandleChartData {
   final double low;
   final double open;
   final double close;
-}
-
-class _RadialChartData {
-  _RadialChartData(this.x, this.y, this.count, [this.color]);
-  final String x;
-  final double y;
-  final int count;
-  final Color? color;
 }

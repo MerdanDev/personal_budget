@@ -266,6 +266,7 @@
   "editBudget": "Изменить бюджет",
   "removeBudget": "Удалить бюджет",
   "budgetsEmpty": "Сначала добавьте категорию расходов, чтобы начать планировать бюджет.",
+  "budgetChartUnassignedNotice": "Для этих категорий не задан бюджет. Пожалуйста, добавьте для них бюджет.",
   "budgetSpentOfLimit": "{spent} из {limit}",
   "budgetRemainingAmount": "осталось {amount}",
   "budgetOverAmount": "превышение на {amount}",

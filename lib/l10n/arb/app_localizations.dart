@@ -1480,6 +1480,12 @@ abstract class AppLocalizations {
   /// **'Add an expense category first to start budgeting.'**
   String get budgetsEmpty;
 
+  /// No description provided for @budgetChartUnassignedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'These categories aren\'t assigned a budget. Please add a budget for them.'**
+  String get budgetChartUnassignedNotice;
+
   /// No description provided for @budgetSpentOfLimit.
   ///
   /// In en, this message translates to:

@@ -733,6 +733,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add an expense category first to start budgeting.';
 
   @override
+  String get budgetChartUnassignedNotice =>
+      'These categories aren\'t assigned a budget. Please add a budget for them.';
+
+  @override
   String budgetSpentOfLimit(String spent, String limit) {
     return '$spent of $limit';
   }

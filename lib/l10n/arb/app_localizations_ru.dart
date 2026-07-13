@@ -737,6 +737,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Сначала добавьте категорию расходов, чтобы начать планировать бюджет.';
 
   @override
+  String get budgetChartUnassignedNotice =>
+      'Для этих категорий не задан бюджет. Пожалуйста, добавьте для них бюджет.';
+
+  @override
   String budgetSpentOfLimit(String spent, String limit) {
     return '$spent из $limit';
   }

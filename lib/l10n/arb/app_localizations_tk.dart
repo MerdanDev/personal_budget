@@ -730,6 +730,10 @@ class AppLocalizationsTk extends AppLocalizations {
       'Býujet düzmek üçin ilki çykdajy kategoriýasyny goşuň.';
 
   @override
+  String get budgetChartUnassignedNotice =>
+      'Bu kategoriýalara býudjet bellenilmedik. Haýyş, olar üçin býudjet goşuň.';
+
+  @override
   String budgetSpentOfLimit(String spent, String limit) {
     return '$limit çäkden $spent';
   }

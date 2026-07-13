@@ -52,8 +52,8 @@ class CandleChartPageState extends State<CandleChartPage> {
             },
             tabs: [
               Tab(
-                text: context.l10n.candleChart,
-                icon: const Icon(Icons.candlestick_chart_outlined),
+                text: context.l10n.balance,
+                icon: const Icon(Icons.show_chart),
               ),
               Tab(
                 text: context.l10n.budgets,
@@ -143,7 +143,7 @@ class CandleChartPageState extends State<CandleChartPage> {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 16, left: 6),
                             child: current == 0
-                                ? CandleChartWidget(
+                                ? BalanceChartWidget(
                                     data: pageData.data,
                                     date: pageData.date,
                                     amount: pageData.startingAmount,
@@ -492,8 +492,8 @@ class _BudgetProgressTile extends StatelessWidget {
   }
 }
 
-class CandleChartWidget extends StatefulWidget {
-  const CandleChartWidget({
+class BalanceChartWidget extends StatefulWidget {
+  const BalanceChartWidget({
     required this.data,
     required this.date,
     required this.amount,
@@ -505,12 +505,16 @@ class CandleChartWidget extends StatefulWidget {
   final double? amount;
 
   @override
-  State<CandleChartWidget> createState() => _CandleChartWidgetState();
+  State<BalanceChartWidget> createState() => _BalanceChartWidgetState();
 }
 
-class _CandleChartWidgetState extends State<CandleChartWidget> {
-  final dataSource = <_CandleChartData>[];
+class _BalanceChartWidgetState extends State<BalanceChartWidget> {
+  /// Running end-of-day balance for each day of the month. This carries the
+  /// balance flat across days with no transactions, so the line reads as a
+  /// continuous trend rather than gaps.
+  final dataSource = <_BalancePoint>[];
   late double current;
+
   @override
   void initState() {
     current = widget.amount ?? 0;
@@ -524,84 +528,50 @@ class _CandleChartWidgetState extends State<CandleChartWidget> {
             ? widget.data.first.createdAt.day
             : 1;
     for (; day <= lastDay; day++) {
-      final numbers = <double>[];
       for (var i = 0; i < widget.data.length; i++) {
         if (isSameDay(
           widget.data[i].createdAt,
           DateTime(widget.date.year, widget.date.month, day),
         )) {
           current += widget.data[i].amount;
-          numbers.add(current);
         }
       }
-      double open;
-      double close;
-      double high;
-      double low;
-      if (numbers.isNotEmpty && numbers.length >= 2) {
-        if (dataSource.isNotEmpty) {
-          open = dataSource.last.close;
-        } else {
-          open = numbers.first;
-        }
-        close = numbers.last;
-        high = numbers.reduce((a, b) => a < b ? b : a);
-        low = numbers.reduce((a, b) => a > b ? b : a);
-      } else if (numbers.isNotEmpty) {
-        if (dataSource.isNotEmpty) {
-          open = dataSource.last.close;
-        } else {
-          open = widget.amount == null ? 0 : numbers.first;
-        }
-        close = high = low = numbers.first;
-      } else {
-        if (dataSource.isEmpty) {
-          open = close = high = low = widget.amount ?? 0;
-        } else {
-          open = close = high = low = dataSource.last.close;
-        }
-      }
-      dataSource.add(_CandleChartData(day.toString(), high, low, open, close));
+      dataSource.add(_BalancePoint(day.toString(), current));
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final cls = Theme.of(context).colorScheme;
+    // Color the trend by how the month ended: red if the balance is negative,
+    // otherwise the theme's primary — a quick at-a-glance health signal.
+    final endedNegative = dataSource.isNotEmpty && dataSource.last.balance < 0;
+    final lineColor = endedNegative ? cls.error : cls.primary;
+
     final tooltip = TooltipBehavior(
       enable: true,
       format: '${context.l10n.day}: point.x\n'
-          '${context.l10n.open}: point.open\n'
-          '${context.l10n.close}: point.close\n'
-          '${context.l10n.high}: point.high\n'
-          '${context.l10n.low}: point.low',
+          '${context.l10n.balance}: point.y',
     );
     return SfCartesianChart(
       primaryXAxis: const CategoryAxis(),
-      primaryYAxis: NumericAxis(
-        minimum: 0,
-        maximum: dataSource.map((e) => e.high).reduce((a, b) => a < b ? b : a),
-        interval: 10,
-      ),
       tooltipBehavior: tooltip,
-      series: <CartesianSeries<_CandleChartData, String>>[
-        CandleSeries<_CandleChartData, String>(
+      series: <CartesianSeries<_BalancePoint, String>>[
+        SplineAreaSeries<_BalancePoint, String>(
           dataSource: dataSource,
-          xValueMapper: (_CandleChartData data, _) => data.x,
-          highValueMapper: (_CandleChartData data, _) => data.high,
-          lowValueMapper: (_CandleChartData data, _) => data.low,
-          openValueMapper: (_CandleChartData data, _) => data.open,
-          closeValueMapper: (_CandleChartData data, _) => data.close,
-          pointColorMapper: (_CandleChartData data, _) {
-            if (data.open > data.close) {
-              return Colors.red;
-            } else if (data.open < data.close) {
-              return Colors.green;
-            } else {
-              return Colors.grey;
-            }
-          },
-          name: context.l10n.counter,
+          xValueMapper: (_BalancePoint data, _) => data.x,
+          yValueMapper: (_BalancePoint data, _) => data.balance,
+          name: context.l10n.balance,
+          borderColor: lineColor,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              lineColor.withValues(alpha: 0.35),
+              lineColor.withValues(alpha: 0.02),
+            ],
+          ),
         ),
       ],
     );
@@ -619,12 +589,9 @@ class ChartPageDate<E> {
   final double? startingAmount;
 }
 
-class _CandleChartData {
-  _CandleChartData(this.x, this.high, this.low, this.open, this.close);
+class _BalancePoint {
+  _BalancePoint(this.x, this.balance);
 
   final String x;
-  final double high;
-  final double low;
-  final double open;
-  final double close;
+  final double balance;
 }

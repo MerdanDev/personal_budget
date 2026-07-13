@@ -534,6 +534,17 @@ class AppLocalizationsTk extends AppLocalizations {
   String get restoreSuccess => 'Maglumatlar dikeldildi';
 
   @override
+  String get restoreFailed => 'Bu ätiýaçlyk faýly okap bolmady';
+
+  @override
+  String restoreCurrencyPrompt(String symbol) {
+    return 'Bu ätiýaçlyk nusgasy \"$symbol\" pul birligini ulanýar. Oňa geçmelimi?';
+  }
+
+  @override
+  String get restoreCurrencyConfirm => 'Geç';
+
+  @override
   String get save => 'Ýatda saklamak';
 
   @override

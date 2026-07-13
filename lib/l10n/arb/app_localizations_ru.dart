@@ -540,6 +540,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get restoreSuccess => 'Данные восстановлены';
 
   @override
+  String get restoreFailed => 'Не удалось прочитать файл резервной копии';
+
+  @override
+  String restoreCurrencyPrompt(String symbol) {
+    return 'В этой резервной копии используется валюта «$symbol». Переключиться на неё?';
+  }
+
+  @override
+  String get restoreCurrencyConfirm => 'Переключить';
+
+  @override
   String get save => 'Сохранять';
 
   @override

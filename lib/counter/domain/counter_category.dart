@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:wallet/counter/domain/csv_codec.dart';
 
 enum CategoryType {
   income,
@@ -39,7 +40,7 @@ class CounterCategory extends Equatable {
   factory CounterCategory.fromList(List<String> data) {
     return CounterCategory(
       uuid: data[0],
-      name: data[1].replaceAll(';', ''),
+      name: csvDecodeField(data[1]),
       type: CategoryType.fromString(data[2]),
       iconCode: int.tryParse(data[3]),
       colorCode: int.tryParse(data[4]),
@@ -97,7 +98,7 @@ class CounterCategory extends Equatable {
   List<String> toListString() {
     return [
       uuid,
-      name.replaceAll(',', ';'),
+      csvEncodeField(name),
       type.name,
       iconCode?.toString() ?? '',
       colorCode?.toString() ?? '',

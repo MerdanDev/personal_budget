@@ -58,6 +58,25 @@ class BudgetCubit extends Cubit<List<CategoryBudget>> {
     emit(update);
   }
 
+  /// Merges the budgets from a restored backup into the current set. Matched by
+  /// category uuid, keeping whichever record was updated more recently
+  /// (last-write-wins), and appending budgets for categories not yet present.
+  void restoreBackup(List<CategoryBudget> incoming) {
+    if (incoming.isEmpty) return;
+    final update = [...state];
+    for (final budget in incoming) {
+      final index =
+          update.indexWhere((b) => b.categoryUuid == budget.categoryUuid);
+      if (index == -1) {
+        update.add(budget);
+      } else if (budget.updatedAt.isAfter(update[index].updatedAt)) {
+        update[index] = budget;
+      }
+    }
+    CounterRepository.setCategoryBudgetList(update);
+    emit(update);
+  }
+
   /// Drops budgets whose category no longer exists, so a deleted category does
   /// not leave an orphan limit behind. Call after category deletions.
   void pruneOrphans(List<CounterCategory> categories) {

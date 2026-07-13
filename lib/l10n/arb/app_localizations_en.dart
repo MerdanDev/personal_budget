@@ -537,6 +537,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restoreSuccess => 'Data restored';
 
   @override
+  String get restoreFailed => 'Couldn\'t read that backup file';
+
+  @override
+  String restoreCurrencyPrompt(String symbol) {
+    return 'This backup uses the currency \"$symbol\". Switch to it?';
+  }
+
+  @override
+  String get restoreCurrencyConfirm => 'Switch';
+
+  @override
   String get save => 'Save';
 
   @override

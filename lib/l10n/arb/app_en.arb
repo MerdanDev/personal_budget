@@ -204,6 +204,14 @@
   "restorePreUpdateSubtitle": "Recover entries as they were before the last app update",
   "restorePreUpdateConfirm": "This replaces your current entries with the snapshot saved before the last app update. Continue?",
   "restoreSuccess": "Data restored",
+  "restoreFailed": "Couldn't read that backup file",
+  "restoreCurrencyPrompt": "This backup uses the currency \"{symbol}\". Switch to it?",
+  "@restoreCurrencyPrompt": {
+    "placeholders": {
+      "symbol": { "type": "String" }
+    }
+  },
+  "restoreCurrencyConfirm": "Switch",
   "save": "Save",
   "save_success": "Successfully saved:",
   "scanBetaBadge": "Beta",

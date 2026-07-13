@@ -34,7 +34,7 @@ $ flutter run --flavor production --target lib/main_production.dart
 To build appbundle use following command:
 
 ```sh  
-flutter build appbundle --release --flavor production --target lib/main_development.dart --no-tree-shake-icons
+flutter build appbundle --release --flavor production --target lib/main_production.dart
 ```
 
 _\*Wallet works on iOS, Android, Web, and Windows._

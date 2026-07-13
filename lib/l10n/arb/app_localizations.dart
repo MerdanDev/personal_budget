@@ -1108,6 +1108,24 @@ abstract class AppLocalizations {
   /// **'Data restored'**
   String get restoreSuccess;
 
+  /// No description provided for @restoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read that backup file'**
+  String get restoreFailed;
+
+  /// No description provided for @restoreCurrencyPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup uses the currency \"{symbol}\". Switch to it?'**
+  String restoreCurrencyPrompt(String symbol);
+
+  /// No description provided for @restoreCurrencyConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch'**
+  String get restoreCurrencyConfirm;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:wallet/counter/domain/counter_category.dart';
+import 'package:wallet/counter/domain/csv_codec.dart';
 
 class IncomeExpense extends Equatable {
   //<editor-fold desc="Data Methods">
@@ -41,8 +42,8 @@ class IncomeExpense extends Equatable {
       // index 2 is the legacy `title` column, kept for positional
       // compatibility; fold it into the description on import.
       description: _foldTitle(
-        data[2].isNotEmpty ? data[2].replaceAll(';', '') : null,
-        data[3].isNotEmpty ? data[3].replaceAll(';', '') : null,
+        data[2].isNotEmpty ? csvDecodeField(data[2]) : null,
+        data[3].isNotEmpty ? csvDecodeField(data[3]) : null,
         category?.name,
       ),
       updatedAt: DateTime.parse(data[4]),
@@ -121,7 +122,7 @@ class IncomeExpense extends Equatable {
       amount.toString(),
       // legacy `title` column kept empty for positional CSV compatibility
       '',
-      description?.replaceAll(',', ';') ?? '',
+      if (description != null) csvEncodeField(description!) else '',
       updatedAt.toString(),
       createdAt.toString(),
       if (category != null) ...category!.toListString(),

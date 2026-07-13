@@ -1,13 +1,15 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/counter/counter.dart';
-import 'package:wallet/counter/domain/income_expense.dart';
+import 'package:wallet/counter/cubit/budget_cubit.dart';
+import 'package:wallet/counter/cubit/category_cubit.dart';
+import 'package:wallet/counter/infrastructure/backup_codec.dart';
 import 'package:wallet/counter/infrastructure/counter_repository.dart';
 import 'package:wallet/home/presentation/budget_page.dart';
 import 'package:wallet/home/presentation/category_screen.dart';
@@ -62,6 +64,82 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  Future<void> _restoreBackup(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final successMessage = context.l10n.restoreSuccess;
+    final failedMessage = context.l10n.restoreFailed;
+
+    // Accept the current `.xlsx` workbook and legacy `.csv` exports; the
+    // format is detected from the file contents on read.
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx', 'csv'],
+    );
+    // User canceled the picker
+    if (result == null) return;
+
+    final path = result.files.single.path;
+    if (path == null) {
+      messenger.showSnackBar(SnackBar(content: Text(failedMessage)));
+      return;
+    }
+
+    final BackupData backup;
+    try {
+      backup = decodeBackup(await File(path).readAsBytes());
+    } on Object {
+      // A malformed or non-backup file throws while parsing; surface it
+      // instead of crashing with no feedback.
+      messenger.showSnackBar(SnackBar(content: Text(failedMessage)));
+      return;
+    }
+
+    // Restore categories and budgets first so transactions and their category
+    // references land against an up-to-date set.
+    CounterCategoryCubit.instance.restoreBackup(backup.categories);
+    BudgetCubit.instance.restoreBackup(backup.budgets);
+    CounterBloc.instance.add(RestoreBackUp(list: backup.entries));
+
+    // The currency is a personal choice, so only adopt the backup's when it
+    // actually differs and the user confirms — never overwrite it silently.
+    final currency = backup.currency;
+    if (currency != null &&
+        currency.isNotEmpty &&
+        currency != CurrencyCubit.instance.state &&
+        context.mounted &&
+        await _confirmCurrencyChange(context, currency)) {
+      await CurrencyCubit.instance.changeSymbol(currency);
+    }
+
+    messenger.showSnackBar(SnackBar(content: Text(successMessage)));
+  }
+
+  Future<bool> _confirmCurrencyChange(
+    BuildContext context,
+    String symbol,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(context.l10n.currency),
+          content: Text(context.l10n.restoreCurrencyPrompt(symbol)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(context.l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(context.l10n.restoreCurrencyConfirm),
+            ),
+          ],
+        );
+      },
+    );
+    return confirmed ?? false;
+  }
+
   Future<void> _restorePreUpdate(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
     final successMessage = context.l10n.restoreSuccess;
@@ -85,10 +163,12 @@ class _SettingsPageState extends State<SettingsPage> {
       },
     );
     if (confirmed ?? false) {
+      // Wait for the bloc to actually apply the restore (which also clears the
+      // snapshot) before rebuilding, so the now-redundant restore tile is gone
+      // on the next frame rather than lingering for a beat.
+      final applied = CounterBloc.instance.stream.first;
       CounterBloc.instance.add(RestorePreUpdateBackup());
-      // Let the bloc process the event (it restores and clears the snapshot)
-      // before rebuilding so the now-redundant restore tile disappears.
-      await Future<void>.delayed(Duration.zero);
+      await applied;
       messenger.showSnackBar(
         SnackBar(content: Text(successMessage)),
       );
@@ -163,56 +243,42 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.backup_outlined),
             title: Text(context.l10n.backUp),
             onTap: () async {
-              const name = 'back_up.csv';
-              var dialogTitle = 'Please select an output file:';
-              if (context.mounted) {
-                dialogTitle = context.l10n.select_output_file;
-              }
+              const name = 'back_up.xlsx';
+              final messenger = ScaffoldMessenger.of(context);
+              final dialogTitle = context.l10n.select_output_file;
+              final savedPrefix = context.l10n.save_success;
 
-              final data = CounterBloc.instance.data;
-              // User canceled the picker
-              final directory = await getApplicationDocumentsDirectory();
-              final file = File('${directory.path}/$name');
-              final sink = file.openWrite();
-              for (final item in data) {
-                final row = item.toListString();
-                sink
-                  ..writeAll(row, ',')
-                  ..writeln();
-              }
-              await sink.close();
-              await file.create();
+              // A complete snapshot as a spreadsheet workbook: one tab each for
+              // transactions, the full category list (including unused ones),
+              // monthly budgets and settings (currency). Built in memory so the
+              // picker gets the bytes directly, with no scratch file left
+              // behind.
+              final bytes = encodeBackup(
+                currency: CurrencyCubit.instance.state,
+                categories: CounterCategoryCubit.instance.state,
+                budgets: BudgetCubit.instance.state,
+                entries: CounterBloc.instance.data,
+              );
 
               final outputFile = await FilePicker.saveFile(
                 dialogTitle: dialogTitle,
                 fileName: name,
                 type: FileType.custom,
-                allowedExtensions: ['csv'],
-                bytes: await file.readAsBytes(),
+                allowedExtensions: ['xlsx'],
+                bytes: Uint8List.fromList(bytes),
               );
 
-              if (context.mounted && outputFile != null) {
-                final snackBar = SnackBar(
-                  content: Text('${context.l10n.save_success} $outputFile'),
+              if (outputFile != null) {
+                messenger.showSnackBar(
+                  SnackBar(content: Text('$savedPrefix $outputFile')),
                 );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               }
             },
           ),
           ListTile(
             leading: const Icon(Icons.settings_backup_restore),
             title: Text(context.l10n.restore_backUp),
-            onTap: () async {
-              final result = await FilePicker.pickFiles();
-
-              if (result != null) {
-                final file = File(result.files.single.path!);
-                final list = await csvToIncomeExpense(file.path);
-                CounterBloc.instance.add(RestoreBackUp(list: list));
-              } else {
-                // User canceled the picker
-              }
-            },
+            onTap: () => _restoreBackup(context),
           ),
           if (CounterRepository.hasIncomeExpenseBackup())
             ListTile(
@@ -262,16 +328,4 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
-}
-
-Future<List<IncomeExpense>> csvToIncomeExpense(String filePath) async {
-  final file = File(filePath);
-  final lines = await file.readAsLines();
-  final data = <IncomeExpense>[];
-  for (final line in lines) {
-    data.add(
-      IncomeExpense.fromList(line.split(',')),
-    );
-  }
-  return data;
 }

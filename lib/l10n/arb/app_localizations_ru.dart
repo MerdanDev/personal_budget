@@ -602,6 +602,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get search => 'Поиск';
 
   @override
+  String get noSearchResults => 'Нет подходящих операций';
+
+  @override
   String get second => 'секунда';
 
   @override

@@ -9,8 +9,24 @@ import 'package:wallet/counter/presentation/widgets/income_expense_widget.dart';
 import 'package:wallet/home/presentation/notification_screen.dart';
 import 'package:wallet/l10n/l10n.dart';
 
-class CounterPage extends StatelessWidget {
+class CounterPage extends StatefulWidget {
   const CounterPage({super.key});
+
+  @override
+  State<CounterPage> createState() => _CounterPageState();
+}
+
+class _CounterPageState extends State<CounterPage> {
+  bool _searchVisible = false;
+
+  void _toggleSearch() {
+    setState(() => _searchVisible = !_searchVisible);
+    // Reset the query when the field is dismissed so the hidden search does not
+    // keep filtering the list.
+    if (!_searchVisible) {
+      context.read<CounterBloc>().add(ChangeSearchQuery(''));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +35,11 @@ class CounterPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar.large(
+            leading: IconButton(
+              tooltip: context.l10n.search,
+              onPressed: _toggleSearch,
+              icon: Icon(_searchVisible ? Icons.close : Icons.search),
+            ),
             title: const CounterText(),
             actions: [
               IconButton(
@@ -39,7 +60,7 @@ class CounterPage extends StatelessWidget {
               ),
             ],
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(140),
+              preferredSize: Size.fromHeight(_searchVisible ? 200 : 140),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -47,6 +68,10 @@ class CounterPage extends StatelessWidget {
                   children: [
                     const IncomeExpenseSummary(),
                     const SizedBox(height: 12),
+                    if (_searchVisible) ...[
+                      const TransactionSearchField(autofocus: true),
+                      const SizedBox(height: 12),
+                    ],
                     BlocBuilder<CounterBloc, CounterState>(
                       builder: (context, state) {
                         return SegmentedButton<DateFilter>(
@@ -165,6 +190,25 @@ class _CounterDataViewState extends State<CounterDataView> {
           if (state.data.isNotEmpty) {
             context.read<CounterCubit>().calculate();
           }
+          if (state.data.isEmpty && state.searchQuery.trim().isNotEmpty) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.search_off, size: 48),
+                    const SizedBox(height: 12),
+                    Text(
+                      context.l10n.noSearchResults,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           return SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -176,6 +220,62 @@ class _CounterDataViewState extends State<CounterDataView> {
           );
         }
       },
+    );
+  }
+}
+
+/// Search box on the transaction list. Owns its own [TextEditingController]
+/// and pushes every change to [CounterBloc] as a [ChangeSearchQuery]; the bloc
+/// filters by description, category name, amount and date. Shows a clear
+/// button while there is text.
+class TransactionSearchField extends StatefulWidget {
+  const TransactionSearchField({this.autofocus = false, super.key});
+
+  final bool autofocus;
+
+  @override
+  State<TransactionSearchField> createState() => _TransactionSearchFieldState();
+}
+
+class _TransactionSearchFieldState extends State<TransactionSearchField> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onChanged(String value) {
+    context.read<CounterBloc>().add(ChangeSearchQuery(value));
+    // Rebuild so the clear button appears/disappears with the text.
+    setState(() {});
+  }
+
+  void _clear() {
+    _controller.clear();
+    _onChanged('');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _controller,
+      autofocus: widget.autofocus,
+      textInputAction: TextInputAction.search,
+      onChanged: _onChanged,
+      decoration: InputDecoration(
+        isDense: true,
+        hintText: context.l10n.search,
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: _controller.text.isNotEmpty
+            ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: _clear,
+              )
+            : null,
+        border: const OutlineInputBorder(),
+      ),
     );
   }
 }

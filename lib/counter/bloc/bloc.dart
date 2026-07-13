@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wallet/core/currency_cubit.dart';
 import 'package:wallet/core/notification_service.dart';
@@ -64,13 +65,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         // get date filter from cache;
         dateFilter = CounterRepository.getDateFilter();
         // complete loading;
-        emit(
-          CounterState(
-            loading: false,
-            dateFilter: dateFilter,
-            data: [...filterByDate()],
-          ),
-        );
+        emit(_loaded());
       },
     );
     on<IncomeExpenseEvent>((event, emit) {
@@ -106,13 +101,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
           ),
         );
       }
-      emit(
-        CounterState(
-          data: [...filterByDate()],
-          dateFilter: dateFilter,
-          loading: false,
-        ),
-      );
+      emit(_loaded());
     });
 
     on<UpdateIncomeExpenseEvent>(
@@ -135,13 +124,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
           );
 
         CounterRepository.setIncomeExpenseList(data);
-        emit(
-          CounterState(
-            data: [...filterByDate()],
-            dateFilter: dateFilter,
-            loading: false,
-          ),
-        );
+        emit(_loaded());
       },
     );
 
@@ -165,13 +148,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         }
 
         CounterRepository.setIncomeExpenseList(data);
-        emit(
-          CounterState(
-            data: [...filterByDate()],
-            dateFilter: dateFilter,
-            loading: false,
-          ),
-        );
+        emit(_loaded());
       },
     );
 
@@ -180,27 +157,19 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         data.removeWhere((element) => element.uuid == event.uuid);
 
         CounterRepository.setIncomeExpenseList(data);
-        emit(
-          CounterState(
-            data: [...filterByDate()],
-            dateFilter: dateFilter,
-            loading: false,
-          ),
-        );
+        emit(_loaded());
       },
     );
 
     on<ChangeDateFilter>((event, emit) {
       dateFilter = event.dateFilter;
       CounterRepository.setDateFilter(event.dateFilter);
-      final filteredData = filterByDate();
-      emit(
-        CounterState(
-          data: [...filteredData],
-          dateFilter: dateFilter,
-          loading: false,
-        ),
-      );
+      emit(_loaded());
+    });
+
+    on<ChangeSearchQuery>((event, emit) {
+      searchQuery = event.query;
+      emit(_loaded());
     });
 
     on<CategoryUpdate>((event, emit) {
@@ -217,13 +186,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         ..clear()
         ..addAll(result);
       CounterRepository.setIncomeExpenseList(data);
-      emit(
-        CounterState(
-          data: [...filterByDate()],
-          dateFilter: dateFilter,
-          loading: false,
-        ),
-      );
+      emit(_loaded());
     });
 
     on<CategoryDelete>((event, emit) {
@@ -247,13 +210,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         ..clear()
         ..addAll(result);
       CounterRepository.setIncomeExpenseList(data);
-      emit(
-        CounterState(
-          data: [...filterByDate()],
-          dateFilter: dateFilter,
-          loading: false,
-        ),
-      );
+      emit(_loaded());
     });
 
     on<RestoreBackUp>(
@@ -312,13 +269,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
           ..clear()
           ..addAll(result);
         CounterRepository.setIncomeExpenseList(data);
-        emit(
-          CounterState(
-            data: [...filterByDate()],
-            dateFilter: dateFilter,
-            loading: false,
-          ),
-        );
+        emit(_loaded());
       },
     );
 
@@ -334,13 +285,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
       // The snapshot has served its purpose; drop it so it can't later
       // overwrite newer data and the restore option disappears.
       CounterRepository.clearIncomeExpenseBackup();
-      emit(
-        CounterState(
-          data: [...filterByDate()],
-          dateFilter: dateFilter,
-          loading: false,
-        ),
-      );
+      emit(_loaded());
     });
 
     add(InitEvent());
@@ -350,6 +295,18 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
 
   final List<IncomeExpense> data = [];
   DateFilter dateFilter = DateFilter.all;
+
+  /// Active free-text search query. Empty means no search is applied.
+  String searchQuery = '';
+
+  /// Builds the standard post-mutation state: the master list run through the
+  /// active date and search filters, with loading complete.
+  CounterState _loaded() => CounterState(
+        data: [...filterByDate()],
+        dateFilter: dateFilter,
+        loading: false,
+        searchQuery: searchQuery,
+      );
 
   /// Returns [items] with every uncategorised entry assigned the
   /// type-appropriate fallback category, so the list always has a label.
@@ -375,6 +332,9 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
   List<IncomeExpense> filterByDate() {
     return data.reversed.where(
       (element) {
+        if (!_matchesQuery(element)) {
+          return false;
+        }
         final now = DateTime.now();
         // print('Is same week ${isSameWeek(
         //   now,
@@ -409,6 +369,31 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
         }
       },
     ).toList();
+  }
+
+  /// Whether [element] matches the active [searchQuery]. An empty query matches
+  /// everything. The match is case-insensitive and substring-based against the
+  /// entry's description, category name, amount and date, so a single query
+  /// like "coffee", "food", "12.50" or "2026-07" narrows the list the same way.
+  bool _matchesQuery(IncomeExpense element) {
+    final query = searchQuery.trim().toLowerCase();
+    if (query.isEmpty) {
+      return true;
+    }
+    final locale = LocalizationCubit.instance.state.languageCode;
+    final haystack = [
+      element.description ?? '',
+      element.category?.name ?? '',
+      // Both the signed and unsigned amount so "12.5" matches an expense
+      // stored as -12.5.
+      element.amount.toStringAsFixed(2),
+      element.amount.abs().toStringAsFixed(2),
+      // Numeric date (locale-independent) plus a spelled-out form so month
+      // names in the current language are searchable too.
+      DateFormat('yyyy-MM-dd').format(element.createdAt),
+      DateFormat.yMMMMd(locale).format(element.createdAt),
+    ].join(' ').toLowerCase();
+    return haystack.contains(query);
   }
 }
 

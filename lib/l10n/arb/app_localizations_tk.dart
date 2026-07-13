@@ -595,6 +595,9 @@ class AppLocalizationsTk extends AppLocalizations {
   String get search => 'Gözleg';
 
   @override
+  String get noSearchResults => 'Laýyk amal tapylmady';
+
+  @override
   String get second => 'sekund';
 
   @override

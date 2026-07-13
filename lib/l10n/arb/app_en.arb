@@ -228,6 +228,7 @@
   "scanReceipt": "Scan receipt",
   "scanningReceipt": "Reading receipt…",
   "search": "Search",
+  "noSearchResults": "No matching transactions",
   "second": "second",
   "secure": "Secure",
   "selectLanguage": "Select language",

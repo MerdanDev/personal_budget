@@ -66,6 +66,17 @@ class ChangeDateFilter extends CounterEvent {
   List<Object?> get props => [dateFilter];
 }
 
+/// Sets the free-text search query used to filter the transaction list by
+/// description, category name, amount or date. An empty query clears the
+/// search.
+class ChangeSearchQuery extends CounterEvent {
+  ChangeSearchQuery(this.query);
+  final String query;
+
+  @override
+  List<Object?> get props => [query];
+}
+
 class CategoryUpdate extends CounterEvent {
   CategoryUpdate({required this.category});
   final CounterCategory category;

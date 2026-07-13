@@ -599,6 +599,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search => 'Search';
 
   @override
+  String get noSearchResults => 'No matching transactions';
+
+  @override
   String get second => 'second';
 
   @override

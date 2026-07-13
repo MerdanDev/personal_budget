@@ -223,6 +223,7 @@
   "scanReceipt": "Сканировать чек",
   "scanningReceipt": "Распознавание чека…",
   "search": "Поиск",
+  "noSearchResults": "Нет подходящих операций",
   "second": "секунда",
   "secure": "Безопасный",
   "selectLanguage": "Выберите язык",

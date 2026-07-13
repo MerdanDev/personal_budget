@@ -1222,6 +1222,12 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get search;
 
+  /// No description provided for @noSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching transactions'**
+  String get noSearchResults;
+
   /// No description provided for @second.
   ///
   /// In en, this message translates to:

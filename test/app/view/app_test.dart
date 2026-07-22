@@ -22,7 +22,7 @@ void main() {
   setUp(() async {
     // App shows OnboardingScreen until this flag is set, so seed it to reach
     // HomeScreen.
-    await initTestPreferences({KeyData.onboardingCompleted: true});
+    await resetAppState({KeyData.onboardingCompleted: true});
     // App.build reads AnalyticsService.observer, which resolves
     // FirebaseAnalytics.instance and throws [core/no-app] without this.
     await Firebase.initializeApp();

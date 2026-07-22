@@ -1,6 +1,6 @@
 name: wallet
 description: A Very Good Project created by Very Good CLI.
-version: 2.0.9+11
+version: 2.0.10+12
 publish_to: none
 
 environment:

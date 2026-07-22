@@ -77,9 +77,8 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
           );
       // Snapshot the month-to-date spend before this entry lands so a budget
       // threshold crossing can be detected (expenses are negative amounts).
-      final spentBefore = event.amount < 0
-          ? BudgetCubit.spentThisMonth(category.uuid)
-          : 0.0;
+      final spentBefore =
+          event.amount < 0 ? BudgetCubit.spentThisMonth(category.uuid) : 0.0;
       data.add(
         IncomeExpense(
           uuid: event.uuid,

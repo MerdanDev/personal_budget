@@ -1,6 +1,7 @@
 {
   "version": "0.2",
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "language": "en,en-GB",
   "dictionaries": ["vgv_allowed", "vgv_forbidden"],
   "dictionaryDefinitions": [
     {
@@ -15,11 +16,37 @@
     }
   ],
   "useGitignore": true,
+  "ignorePaths": [
+    "**/*.arb",
+    "**/l10n/**",
+    "**/firebase_options.dart"
+  ],
+  "ignoreWords": ["timezone", "meta-data"],
   "words": [
-    "Contador",
-    "localizable",
-    "mostrado",
-    "página",
-    "Texto"
+    "gapjyk",
+    "merdan",
+    "grayscale",
+    "grayscales",
+    "interword",
+    "prefs",
+    "swipeable",
+    "tesseract",
+    "algy",
+    "awans",
+    "aýlyk",
+    "çorba",
+    "günortan",
+    "jemi",
+    "jemy",
+    "nahar",
+    "sargyt",
+    "taksi",
+    "türkmen",
+    "umumy",
+    "всего",
+    "итого",
+    "русский",
+    "сумма",
+    "товар"
   ]
 }

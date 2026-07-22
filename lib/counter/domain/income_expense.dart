@@ -33,9 +33,8 @@ class IncomeExpense extends Equatable {
   }
 
   factory IncomeExpense.fromList(List<String> data) {
-    final category = data.length == 13
-        ? CounterCategory.fromList(data.sublist(6))
-        : null;
+    final category =
+        data.length == 13 ? CounterCategory.fromList(data.sublist(6)) : null;
     return IncomeExpense(
       uuid: data[0],
       amount: double.parse(data[1]),

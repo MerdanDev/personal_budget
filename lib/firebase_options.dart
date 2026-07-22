@@ -83,5 +83,4 @@ class DefaultFirebaseOptions {
     authDomain: 'wallet-gapjyk.firebaseapp.com',
     storageBucket: 'wallet-gapjyk.firebasestorage.app',
   );
-
 }

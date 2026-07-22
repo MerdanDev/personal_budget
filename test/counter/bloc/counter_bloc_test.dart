@@ -6,30 +6,23 @@ import '../../helpers/helpers.dart';
 
 void main() {
   // CounterBloc is a singleton that reads from SingletonSharedPreference when
-  // its InitEvent is processed, so preferences must be initialized before the
-  // instance is ever created.
-  setUpAll(initTestPreferences);
+  // its InitEvent is processed. resetAppState clears the store and re-runs
+  // InitEvent, which must happen per-test: CI merges every file into one
+  // isolate and randomizes ordering, so sibling and cross-file tests would
+  // otherwise leave their entries in the shared instance.
+  setUp(resetAppState);
 
   group('CounterBloc', () {
-    test('starts loading and settles into a non-loading state', () async {
+    test('settles into a non-loading state over an empty store', () async {
       final bloc = CounterBloc();
 
-      // The constructor adds InitEvent; before it is processed the bloc is in
-      // its initial loading state.
-      expect(
-        bloc.state,
-        equals(
-          const CounterState(
-            data: [],
-            dateFilter: DateFilter.all,
-            loading: true,
-          ),
-        ),
-      );
-
-      // Once InitEvent is handled, loading completes.
-      await Future<void>.delayed(const Duration(milliseconds: 50));
+      // The initial `loading: true` state is deliberately not asserted here.
+      // It exists only between the constructor adding InitEvent and that event
+      // being processed, and a singleton is constructed once per process — so
+      // after any other test has touched it, that window is unobservable.
       expect(bloc.state.loading, isFalse);
+      expect(bloc.state.data, isEmpty);
+      expect(bloc.state.dateFilter, equals(DateFilter.all));
     });
 
     test('adding an IncomeExpenseEvent stores the entry', () async {

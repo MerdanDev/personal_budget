@@ -9,7 +9,7 @@ import '../../helpers/helpers.dart';
 class MockCounterCubit extends MockCubit<double> implements CounterCubit {}
 
 void main() {
-  setUp(initTestPreferences);
+  setUp(resetAppState);
 
   group('CounterPage', () {
     testWidgets('renders CounterPage', (tester) async {
